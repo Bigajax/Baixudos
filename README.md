@@ -1,36 +1,69 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Baixudos.PR — Portal oficial
 
-## Getting Started
+Site da marca automotiva **Baixudos.PR** (Maringá — PR): eventos, inscrição de veículos,
+loja, parceiros, comunidade e área informativa de campanhas.
 
-First, run the development server:
+**Stack:** Next.js 16 · TypeScript · Tailwind CSS 4 · React Hook Form + Zod · Framer Motion
+
+## Rodar o projeto
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+npm run dev     # http://localhost:3000
+npm run build   # build de produção
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Onde editar o conteúdo
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Todo o conteúdo editável fica em `content/` — nada de dado real inventado; os campos
+pendentes estão marcados com `[PLACEHOLDER]`, `[NÚMERO]`, `[DATA...]` etc.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Arquivo | O que controla |
+| --- | --- |
+| `content/site.ts` | **WhatsApp oficial (trocar o placeholder!)**, e-mail, CNPJ, modo da loja, estatísticas da home, mensagens do WhatsApp |
+| `content/events.ts` | Próximo evento (9ª edição), link de ingressos, lotes, eventos passados |
+| `content/editions.ts` | Grade de edições anteriores e galerias |
+| `content/products.ts` | Produtos da loja (os atuais são demonstração) |
+| `content/sponsors.ts` | Patrocinadores por categoria (vazio até haver marcas reais) |
+| `content/testimonials.ts` | Depoimentos (placeholders até haver relatos autorizados) |
+| `content/faq.ts` | Perguntas frequentes |
+| `content/campaigns.ts` | Campanhas (desativadas por padrão; exigem compliance completo) |
 
-## Learn More
+### Pendências antes do lançamento
 
-To learn more about Next.js, take a look at the following resources:
+1. `content/site.ts` → `whatsapp`: trocar `5544999999999` pelo número real.
+2. `content/events.ts` → data, local e link de ingressos da 9ª edição quando confirmados.
+3. `app/sitemap.ts` e `app/robots.ts` → domínio real.
+4. Produtos reais na loja e patrocinadores reais.
+5. Revisão jurídica das páginas de privacidade/termos/cookies.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Imagens
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- `public/images/` — fotos reais do Instagram @baixudos.pr com nomes semânticos.
+- `_staging/` — todas as 90 fotos baixadas do perfil + folhas de contato (`sheet_*.jpg`)
+  para escolher substituições. Pode ser apagada quando não for mais útil.
 
-## Deploy on Vercel
+## Campanhas (importante)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+A área `/campanhas` é **apenas informativa** e vem desativada (`campaignsEnabled: false`).
+O site não opera venda de números, sorteio, apuração nem pagamento — isso acontece na
+plataforma externa da empresa promotora. Uma campanha só aparece quando **todos** os campos
+de compliance estão preenchidos **e** `legalReviewConfirmed: true` (confirmação de revisão
+pelo responsável jurídico). A mesma regra existe como `constraint` no banco.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Banco de dados (Supabase)
+
+`supabase/schema.sql` contém o schema completo (eventos, lotes, inscrições de veículos com
+status recebida/em análise/aprovada/recusada/aguardando informações, produtos, pedidos,
+patrocinadores, edições, galerias, depoimentos, leads, contatos comerciais, campanhas com
+trava de compliance, site_settings e audit_log) com RLS configurado.
+
+Nesta primeira versão o site é **estático**: os formulários validam com Zod e enviam os
+dados formatados para o WhatsApp da organização — funciona sem backend. Quando o painel
+administrativo for implementado, os mesmos formulários passam a gravar no Supabase.
+
+## Analytics e cookies
+
+O banner de cookies (Aceitar / Recusar / Personalizar) dispara o evento
+`bxpr:consent` no `window`. Inicialize Google Analytics / Meta Pixel **somente** dentro
+desse evento, respeitando as categorias aceitas (`analytics`, `marketing`).
