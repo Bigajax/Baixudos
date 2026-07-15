@@ -63,7 +63,7 @@ export default function Header() {
       <div className="mx-auto flex h-16 max-w-[1360px] items-center justify-between px-4 sm:px-6 md:h-[72px]">
         <Link href="/" className="flex shrink-0 items-center gap-3" aria-label="Baixudos.PR — início">
           <Image
-            src="/images/logo.jpg"
+            src="/images/logo.png"
             alt="Logo Baixudos.PR"
             width={44}
             height={44}

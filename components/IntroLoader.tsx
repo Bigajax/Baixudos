@@ -23,7 +23,7 @@ export default function IntroLoader() {
       className="intro-overlay fixed inset-0 z-[100] flex flex-col items-center justify-center bg-night"
     >
       <Image
-        src="/images/logo.jpg"
+        src="/images/logo.png"
         alt=""
         width={96}
         height={96}

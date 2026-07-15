@@ -29,7 +29,7 @@ export default function Footer() {
           <div>
             <div className="flex items-center gap-3">
               <Image
-                src="/images/logo.jpg"
+                src="/images/logo.png"
                 alt="Logo Baixudos.PR"
                 width={48}
                 height={48}

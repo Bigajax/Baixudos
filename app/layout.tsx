@@ -48,7 +48,7 @@ const orgSchema = {
   name: "Baixudos.PR",
   description: site.description,
   url: "https://baixudospr.com.br",
-  logo: "https://baixudospr.com.br/images/logo.jpg",
+  logo: "https://baixudospr.com.br/images/logo.png",
   sameAs: [site.instagram],
   address: {
     "@type": "PostalAddress",
