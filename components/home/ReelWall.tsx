@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 /**
  * Parede de reels do hero.
@@ -16,6 +16,8 @@ const reels = [
 
 export default function ReelWall() {
   const ref = useRef<HTMLDivElement>(null);
+  const scrollerRef = useRef<HTMLDivElement>(null);
+  const [activeReel, setActiveReel] = useState(0);
 
   useEffect(() => {
     const videos = [...(ref.current?.querySelectorAll("video") ?? [])];
@@ -53,6 +55,22 @@ export default function ReelWall() {
     };
   }, []);
 
+  const updateActiveReel = () => {
+    const scroller = scrollerRef.current;
+    if (!scroller) return;
+
+    const center = scroller.scrollLeft + scroller.clientWidth / 2;
+    const cards = [...scroller.children] as HTMLElement[];
+    const closest = cards.reduce((best, card, index) => {
+      const cardCenter = card.offsetLeft + card.offsetWidth / 2;
+      return Math.abs(cardCenter - center) < best.distance
+        ? { index, distance: Math.abs(cardCenter - center) }
+        : best;
+    }, { index: 0, distance: Number.POSITIVE_INFINITY });
+
+    setActiveReel(closest.index);
+  };
+
   return (
     <div ref={ref} className="relative">
       {/* Brilho vermelho discreto atrás dos vídeos */}
@@ -66,12 +84,14 @@ export default function ReelWall() {
         className="absolute left-[-12%] right-[-12%] top-[58%] hidden h-[2px] -rotate-6 bg-gradient-to-r from-transparent via-signal/50 to-transparent lg:block"
       />
       <div
+        ref={scrollerRef}
+        onScroll={updateActiveReel}
         className="relative -mx-4 flex snap-x snap-mandatory items-start gap-3 overflow-x-auto px-4 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:px-0 lg:snap-none lg:gap-4 lg:overflow-visible lg:pb-0"
       >
         {reels.map((src, i) => (
           <div
             key={src}
-            className={`group reel-float relative w-[62%] shrink-0 snap-center overflow-hidden rounded-2xl border border-line bg-graphite transition-colors duration-300 hover:border-signal/70 sm:w-auto sm:flex-1 ${
+            className={`group reel-float relative w-[84%] shrink-0 snap-center overflow-hidden rounded-lg border border-line bg-graphite transition-colors duration-300 hover:border-signal/70 sm:w-auto sm:flex-1 sm:rounded-2xl ${
               i === 1 ? "lg:mt-16" : i === 2 ? "lg:mt-32" : ""
             }`}
             style={{ animationDelay: `${i * 1.1}s` }}
@@ -86,16 +106,22 @@ export default function ReelWall() {
               muted
               loop
               playsInline
-              preload="auto"
+              preload={i === 0 ? "auto" : "metadata"}
               aria-label={`Vídeo ${i + 1} dos eventos Baixudos.PR`}
-              className="aspect-[9/16] w-full object-cover"
+              className="aspect-[4/5] w-full object-cover sm:aspect-[9/16]"
             />
           </div>
         ))}
       </div>
-      <p className="mt-3 text-center text-[10px] uppercase tracking-[0.24em] text-smoke/60 sm:hidden">
-        ← Deslize pra ver mais →
-      </p>
+      <div className="mt-3 flex justify-center gap-1.5 sm:hidden" aria-label={`Vídeo ${activeReel + 1} de ${reels.length}`}>
+        {reels.map((src, i) => (
+          <span
+            key={src}
+            aria-hidden="true"
+            className={`h-1 transition-all duration-200 ${i === activeReel ? "w-8 bg-signal" : "w-3 bg-line"}`}
+          />
+        ))}
+      </div>
     </div>
   );
 }
