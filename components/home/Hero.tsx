@@ -4,7 +4,7 @@ import ReelWall from "@/components/home/ReelWall";
 
 export default function Hero() {
   return (
-    <section className="relative flex min-h-[100svh] items-center overflow-hidden bg-night md:min-h-[92vh]">
+    <section id="home-hero" className="relative flex min-h-[100svh] items-center overflow-hidden bg-night md:min-h-[92vh]">
       {/* Linhas diagonais sutis de fundo */}
       <div
         aria-hidden="true"
@@ -18,14 +18,14 @@ export default function Hero() {
       <div className="relative z-10 mx-auto w-full max-w-[1360px] px-4 pb-24 pt-24 sm:px-6 md:pb-28 md:pt-32">
         <div className="grid items-center lg:grid-cols-[1.05fr_1fr] lg:gap-20">
           <div className="contents lg:block">
-            <p className="eyebrow">Cultura automotiva • Maringá — PR</p>
+            <p className="eyebrow hero-eyebrow">Cultura automotiva • Maringá, PR</p>
 
-            <h1 className="display mt-4 text-[40px] text-white sm:mt-5 sm:text-6xl md:text-7xl lg:text-[82px]">
-              Não é só
+            <h1 className="display mt-4 text-[40px] leading-[0.94] text-white sm:mt-5 sm:text-6xl md:text-7xl lg:text-[82px]">
+              Muito além do
               <br />
               carro baixo.
               <br />
-              <span className="slash-mark">É cultura.</span>
+              <span className="slash-mark hero-slash">É cultura.</span>
             </h1>
 
             <p className="order-5 mt-6 max-w-xl text-[15px] leading-relaxed text-smoke sm:text-base md:text-lg lg:order-none">

@@ -54,6 +54,16 @@ body {
   z-index: -1;
 }
 
+/* Destaque do hero: respiro próprio para não colidir com a linha anterior. */
+.hero-slash {
+  margin-top: 0.14em;
+  padding: 0.06em 0.2em 0.08em;
+  line-height: 1;
+}
+.hero-slash::before {
+  inset: 0 -0.06em;
+}
+
 /* Eyebrow com traço diagonal */
 .eyebrow {
   display: inline-flex;
@@ -71,6 +81,16 @@ body {
   height: 2px;
   background: #ff1010;
   transform: skewX(-30deg) translateX(2px);
+}
+@media (max-width: 639px) {
+  .hero-eyebrow {
+    gap: 0.5rem;
+    font-size: 0.625rem;
+    letter-spacing: 0.15em;
+  }
+  .hero-eyebrow::before {
+    width: 1rem;
+  }
 }
 
 /* Divisória diagonal entre seções */
