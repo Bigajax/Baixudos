@@ -49,23 +49,6 @@ export default function Hero() {
                 Inscrever meu projeto
               </Link>
             </div>
-
-            <Link
-              href="/eventos/9-edicao"
-              className="group mt-9 inline-flex items-center gap-3 border border-line bg-panel/80 py-3 pl-4 pr-5 text-[13px] text-smoke backdrop-blur-sm transition-colors hover:border-signal/60 hover:text-white"
-            >
-              <span className="relative flex h-2.5 w-2.5" aria-hidden="true">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-signal opacity-60" />
-                <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-signal" />
-              </span>
-              <span>
-                <strong className="font-bold text-white">9ª edição confirmada</strong> — 25 de
-                outubro · Race Park Maringá Motorsport
-              </span>
-              <span aria-hidden="true" className="text-signal transition-transform group-hover:translate-x-1">
-                →
-              </span>
-            </Link>
           </div>
 
           <ReelWall />

@@ -11,13 +11,18 @@ export default function VideoSection() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [muted, setMuted] = useState(true);
 
-  // Respeita "movimento reduzido": não roda o vídeo sozinho.
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
+    // Respeita "movimento reduzido": não roda o vídeo sozinho.
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       video.pause();
+      return;
     }
+    // Safari exige muted como atributo + play() explícito para autoplay.
+    video.muted = true;
+    video.setAttribute("muted", "");
+    video.play().catch(() => {});
   }, []);
 
   return (
@@ -50,11 +55,12 @@ export default function VideoSection() {
               <video
                 ref={videoRef}
                 src={videoUrl}
+                poster="/images/palco-8a-chuva.jpg"
                 autoPlay
                 muted={muted}
                 loop
                 playsInline
-                preload="metadata"
+                preload="auto"
                 aria-label="Vídeo de uma edição do evento Baixudos.PR"
                 className="block max-h-[72vh] w-auto max-w-full"
               />

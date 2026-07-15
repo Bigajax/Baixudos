@@ -56,21 +56,7 @@ export default function CookieBanner() {
             cookies de análise e marketing. O site continua funcionando normalmente se você
             recusar os opcionais.
           </p>
-          <div className="flex flex-wrap items-center gap-3">
-            <button
-              type="button"
-              onClick={() => setCustomize(!customize)}
-              className="border border-line px-4 py-2.5 text-xs font-bold uppercase tracking-[0.1em] text-smoke transition-colors hover:text-white"
-            >
-              Personalizar
-            </button>
-            <button
-              type="button"
-              onClick={() => save({ essential: true, analytics: false, marketing: false })}
-              className="border border-line px-4 py-2.5 text-xs font-bold uppercase tracking-[0.1em] text-smoke transition-colors hover:text-white"
-            >
-              Recusar
-            </button>
+          <div className="flex flex-col gap-2.5 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3">
             <button
               type="button"
               onClick={() =>
@@ -80,9 +66,23 @@ export default function CookieBanner() {
                     : { essential: true, analytics: true, marketing: true },
                 )
               }
-              className="bg-signal px-5 py-2.5 text-xs font-bold uppercase tracking-[0.1em] text-white transition-colors hover:bg-signal-dark"
+              className="order-1 w-full bg-signal px-5 py-3.5 text-sm font-bold uppercase tracking-[0.1em] text-white transition-colors hover:bg-signal-dark sm:order-3 sm:w-auto sm:py-2.5 sm:text-xs"
             >
               {customize ? "Salvar preferências" : "Aceitar"}
+            </button>
+            <button
+              type="button"
+              onClick={() => save({ essential: true, analytics: false, marketing: false })}
+              className="order-2 w-full border border-line px-4 py-3.5 text-sm font-bold uppercase tracking-[0.1em] text-smoke transition-colors hover:text-white sm:w-auto sm:py-2.5 sm:text-xs"
+            >
+              Recusar
+            </button>
+            <button
+              type="button"
+              onClick={() => setCustomize(!customize)}
+              className="order-3 w-full border border-line px-4 py-3.5 text-sm font-bold uppercase tracking-[0.1em] text-smoke transition-colors hover:text-white sm:order-1 sm:w-auto sm:py-2.5 sm:text-xs"
+            >
+              Personalizar
             </button>
           </div>
         </div>

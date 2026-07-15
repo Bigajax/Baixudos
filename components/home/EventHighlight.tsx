@@ -13,17 +13,17 @@ export default function EventHighlight() {
   const ticketHref = nextEvent.ticketUrl ?? `/eventos/${nextEvent.slug}`;
 
   return (
-    <section id="proximo-evento" className="mx-auto max-w-[1360px] px-4 py-20 sm:px-6 md:py-28">
+    <section id="proximo-evento" className="mx-auto max-w-[1360px] px-4 py-14 sm:px-6 md:py-28">
       <Reveal>
         <p className="eyebrow">Próxima edição</p>
-        <h2 className="display mt-4 max-w-3xl text-4xl text-white sm:text-5xl md:text-6xl">
+        <h2 className="display mt-4 max-w-3xl text-3xl text-white sm:text-5xl md:text-6xl">
           O próximo encontro <span className="slash-mark">já tem nome.</span>
         </h2>
       </Reveal>
 
-      <div className="mt-12 grid gap-10 lg:grid-cols-[1.05fr_1fr] lg:gap-14">
+      <div className="mt-8 grid gap-8 md:mt-12 lg:grid-cols-[1.05fr_1fr] lg:gap-14">
         <Reveal className="relative">
-          <div className="relative aspect-[4/5] overflow-hidden border border-line sm:aspect-[4/4.4]">
+          <div className="relative aspect-square overflow-hidden border border-line sm:aspect-[4/4.4]">
             <Image
               src={nextEvent.cover}
               alt={`Anúncio oficial da ${nextEvent.edition} da Baixudos.PR`}
@@ -32,19 +32,19 @@ export default function EventHighlight() {
               sizes="(max-width: 1024px) 100vw, 50vw"
               className="object-cover"
             />
-            <span className="display absolute left-4 top-4 bg-signal px-4 py-2 text-sm tracking-wide text-white">
+            <span className="display absolute left-3 top-3 bg-signal px-3 py-1.5 text-xs tracking-wide text-white md:left-4 md:top-4 md:px-4 md:py-2 md:text-sm">
               Próxima edição
             </span>
           </div>
         </Reveal>
 
         <Reveal delay={0.1} className="flex flex-col justify-center">
-          <h3 className="display text-3xl text-white md:text-4xl">{nextEvent.name}</h3>
+          <h3 className="display text-2xl text-white md:text-4xl">{nextEvent.name}</h3>
 
-          <dl className="mt-6 space-y-3 border-l-2 border-signal pl-5">
+          <dl className="mt-5 space-y-3 border-l-2 border-signal pl-4 md:mt-6 md:pl-5">
             <div>
               <dt className="text-[11px] uppercase tracking-[0.2em] text-smoke">Data</dt>
-              <dd className="text-lg font-semibold text-white">
+              <dd className="text-base font-semibold text-white md:text-lg">
                 {hasDate
                   ? new Date(nextEvent.date!).toLocaleDateString("pt-BR", {
                       day: "2-digit",
@@ -56,7 +56,7 @@ export default function EventHighlight() {
             </div>
             <div>
               <dt className="text-[11px] uppercase tracking-[0.2em] text-smoke">Local</dt>
-              <dd className="text-lg font-semibold text-white">
+              <dd className="text-base font-semibold text-white md:text-lg">
                 {nextEvent.venue} · {nextEvent.city}
                 {nextEvent.mapUrl && (
                   <a
@@ -72,7 +72,7 @@ export default function EventHighlight() {
             </div>
           </dl>
 
-          <p className="mt-6 max-w-lg text-[15px] leading-relaxed text-smoke">
+          <p className="mt-5 max-w-lg text-sm leading-relaxed text-smoke md:mt-6 md:text-[15px]">
             Prepare o projeto, reúna a galera e venha viver mais uma edição da Baixudos.PR.{" "}
             {nextEvent.description}
           </p>

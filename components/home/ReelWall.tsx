@@ -2,7 +2,12 @@
 
 import { useEffect, useRef } from "react";
 
-/** Parede de reels do hero: 3 vídeos verticais em cascata diagonal, mudos e em loop. */
+/**
+ * Parede de reels do hero.
+ * Desktop: 3 vídeos verticais em cascata diagonal.
+ * Mobile: carrossel deslizável com snap, reels grandes.
+ * Vídeos em H.264 + faststart (VP9 não toca no iOS/Safari).
+ */
 const reels = [
   "/videos/reel-hero-1.mp4",
   "/videos/reel-hero-2.mp4",
@@ -21,14 +26,19 @@ export default function ReelWall() {
       return;
     }
 
-    // Largada sincronizada: espera os três estarem prontos e dá play juntos.
+    // Garante autoplay (Safari exige muted como atributo + play() explícito)
     let cancelled = false;
     const ready = (v: HTMLVideoElement) =>
       new Promise<void>((resolve) => {
         if (v.readyState >= 3) return resolve();
         v.addEventListener("canplay", () => resolve(), { once: true });
-        setTimeout(resolve, 4000); // não trava se um vídeo demorar
+        setTimeout(resolve, 4000);
       });
+
+    videos.forEach((v) => {
+      v.muted = true;
+      v.setAttribute("muted", "");
+    });
 
     Promise.all(videos.map(ready)).then(() => {
       if (cancelled) return;
@@ -53,14 +63,16 @@ export default function ReelWall() {
       {/* Linha de velocidade atravessando a parede */}
       <div
         aria-hidden="true"
-        className="absolute left-[-12%] right-[-12%] top-[58%] h-[2px] -rotate-6 bg-gradient-to-r from-transparent via-signal/50 to-transparent"
+        className="absolute left-[-12%] right-[-12%] top-[58%] hidden h-[2px] -rotate-6 bg-gradient-to-r from-transparent via-signal/50 to-transparent lg:block"
       />
-      <div className="relative flex items-start gap-3 md:gap-4">
+      <div
+        className="relative -mx-4 flex snap-x snap-mandatory items-start gap-3 overflow-x-auto px-4 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:mx-0 sm:px-0 lg:snap-none lg:gap-4 lg:overflow-visible lg:pb-0"
+      >
         {reels.map((src, i) => (
           <div
             key={src}
-            className={`group reel-float relative flex-1 overflow-hidden rounded-2xl border border-line bg-graphite transition-colors duration-300 hover:border-signal/70 ${
-              i === 1 ? "mt-10 md:mt-16" : i === 2 ? "mt-20 md:mt-32" : ""
+            className={`group reel-float relative w-[62%] shrink-0 snap-center overflow-hidden rounded-2xl border border-line bg-graphite transition-colors duration-300 hover:border-signal/70 sm:w-auto sm:flex-1 ${
+              i === 1 ? "lg:mt-16" : i === 2 ? "lg:mt-32" : ""
             }`}
             style={{ animationDelay: `${i * 1.1}s` }}
           >
@@ -81,6 +93,9 @@ export default function ReelWall() {
           </div>
         ))}
       </div>
+      <p className="mt-3 text-center text-[10px] uppercase tracking-[0.24em] text-smoke/60 sm:hidden">
+        ← Deslize pra ver mais →
+      </p>
     </div>
   );
 }
