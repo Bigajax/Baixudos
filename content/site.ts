@@ -48,7 +48,7 @@ export const site = {
    */
   stats: [
     { value: "8", label: "edições realizadas" },
-    { value: "25 OUT", label: "9ª edição confirmada" },
+    { value: "9ª", label: "edição a caminho" },
     { value: "+93 mil", label: "seguidores na comunidade" },
     { value: "Maringá — PR", label: "de Maringá pro mundo" },
   ],

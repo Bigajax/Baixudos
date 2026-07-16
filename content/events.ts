@@ -43,8 +43,8 @@ export const nextEvent: BxEvent = {
   name: "Baixudos.PR — 9ª Edição",
   edition: "9ª edição",
   status: "ingressos",
-  date: "2026-10-25T00:00:00-03:00",
-  dateLabel: "25 de outubro de 2026",
+  date: null, // [PLACEHOLDER] preencher quando a organização confirmar a data
+  dateLabel: "Data a confirmar",
   timeLabel: "Horário a confirmar",
   venue: "Race Park Maringá Motorsport",
   city: "Maringá — PR",

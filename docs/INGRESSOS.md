@@ -76,8 +76,8 @@ precisar mexer.
 ## 5. Checklist para colocar a 9ª edição à venda
 
 - [ ] Criar conta de produtor na Sympla (CNPJ + conta bancária + e-mail oficial)
-- [ ] Criar o evento: nome, data 25/10/2026, horário, Race Park Maringá
-      Motorsport, imagem de capa, descrição
+- [ ] Criar o evento: nome, data e horário oficiais (a confirmar), local,
+      imagem de capa, descrição
 - [ ] Criar ingressos: 1º lote (valor oficial + quantidade), 2º lote agendado
       (por esgotamento ou data)
 - [ ] Decidir: taxa repassada ao comprador ou absorvida

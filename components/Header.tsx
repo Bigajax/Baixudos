@@ -166,7 +166,7 @@ export default function Header() {
             <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-signal" />
           </span>
           <span>
-            <strong className="font-bold text-white">9ª edição</strong> — 25 de outubro · Race
+            <strong className="font-bold text-white">9ª edição</strong> — em breve · Race
             Park Maringá
           </span>
         </Link>
