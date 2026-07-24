@@ -2,9 +2,11 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { site } from "@/content/site";
 import { getRaffleCampaign, getCampaignGrid } from "@/lib/raffle/queries";
+import { getCampaignPacks, getCampaignTicketOffer } from "@/lib/checkout/queries";
+import { paymentProviderName } from "@/lib/payments";
 import CampaignHero from "@/components/raffle/CampaignHero";
 import HowToParticipate from "@/components/raffle/HowToParticipate";
-import NumberGrid from "@/components/raffle/NumberGrid";
+import CampaignParticipation from "@/components/raffle/CampaignParticipation";
 import EventSection from "@/components/raffle/EventSection";
 import CampaignDocs from "@/components/raffle/CampaignDocs";
 import CampaignFAQ from "@/components/raffle/CampaignFAQ";
@@ -32,12 +34,23 @@ export default async function CampanhaPage(props: PageProps<"/campanhas/[slug]">
   const campaign = await getRaffleCampaign(slug);
   if (!campaign) notFound();
 
-  const grid = await getCampaignGrid(campaign.id, campaign.totalNumbers);
+  const [grid, packs, ticketOffer] = await Promise.all([
+    getCampaignGrid(campaign.id, campaign.totalNumbers),
+    getCampaignPacks(campaign.id),
+    getCampaignTicketOffer(campaign.id),
+  ]);
+  const sandbox = paymentProviderName === "sandbox";
 
   return (
     <>
       <CampaignHero campaign={campaign} counts={grid.counts} />
-      <NumberGrid campaign={campaign} grid={grid} />
+      <CampaignParticipation
+        campaign={campaign}
+        grid={grid}
+        packs={packs}
+        ticketOffer={ticketOffer}
+        sandbox={sandbox}
+      />
       <HowToParticipate />
       <EventSection campaign={campaign} />
       <CampaignDocs campaign={campaign} />

@@ -52,6 +52,8 @@ export default function Header() {
 
   const ticketHref = nextEvent.ticketUrl ?? `/eventos/${nextEvent.slug}`;
 
+  if (pathname.startsWith("/admin")) return null;
+
   return (
     <>
     <header

@@ -74,28 +74,34 @@ export default function NumberGridToolbar({
       </div>
 
       {/* Seleção aleatória + limpar */}
-      <div className="flex flex-wrap items-center gap-2">
-        <span className="mr-1 text-xs uppercase tracking-[0.14em] text-smoke">Aleatório:</span>
-        {quickPicks.map((n) => (
-          <button
-            key={n}
-            type="button"
-            onClick={() => onRandom(n)}
-            className="border border-line px-3 py-1.5 font-mono text-sm text-white transition-colors hover:border-signal hover:text-signal"
-          >
-            +{n}
-          </button>
-        ))}
-        {hasSelection && (
-          <button
-            type="button"
-            onClick={onClear}
-            className="ml-auto text-xs font-semibold uppercase tracking-[0.1em] text-smoke underline-offset-4 transition-colors hover:text-signal hover:underline"
-          >
-            Limpar seleção
-          </button>
-        )}
-      </div>
+      {(quickPicks.length > 0 || hasSelection) && (
+        <div className="flex flex-wrap items-center gap-2">
+          {quickPicks.length > 0 && (
+            <>
+              <span className="mr-1 text-xs uppercase tracking-[0.14em] text-smoke">Aleatório:</span>
+              {quickPicks.map((n) => (
+                <button
+                  key={n}
+                  type="button"
+                  onClick={() => onRandom(n)}
+                  className="border border-line px-3 py-1.5 font-mono text-sm text-white transition-colors hover:border-signal hover:text-signal"
+                >
+                  +{n}
+                </button>
+              ))}
+            </>
+          )}
+          {hasSelection && (
+            <button
+              type="button"
+              onClick={onClear}
+              className="ml-auto text-xs font-semibold uppercase tracking-[0.1em] text-smoke underline-offset-4 transition-colors hover:text-signal hover:underline"
+            >
+              Limpar seleção
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 }

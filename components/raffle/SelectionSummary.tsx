@@ -4,59 +4,72 @@ import { formatPrice } from "@/lib/format";
 import { padNumber } from "@/lib/raffle/types";
 
 interface SummaryProps {
-  selected: number[]; // ordenado
+  planKind: "free" | "pack" | null;
+  packQuantity?: number;
+  subtotalCents: number;
+  selectedNumbers: number[];
   padding: number;
-  priceCents: number;
-  maxPerOrder: number;
-  onRemove: (n: number) => void;
+  complete: boolean;
   onClear: () => void;
+  onContinue: () => void;
+  onRemove?: (n: number) => void;
 }
 
 export default function SelectionSummary({
-  selected,
+  planKind,
+  packQuantity,
+  subtotalCents,
+  selectedNumbers,
   padding,
-  priceCents,
-  maxPerOrder,
-  onRemove,
+  complete,
   onClear,
+  onContinue,
+  onRemove,
 }: SummaryProps) {
-  if (selected.length === 0) return null;
+  // Nada escolhido ainda → não mostra a barra (o seletor é o CTA).
+  if (!planKind && selectedNumbers.length === 0) return null;
 
-  const totalCents = selected.length * priceCents;
-  const overLimit = selected.length > maxPerOrder;
+  const qty = planKind === "pack" ? (packQuantity ?? 0) : selectedNumbers.length;
+
+  const ctaLabel = !complete
+    ? planKind === "pack"
+      ? `Selecione ${packQuantity} números`
+      : "Selecione seus números"
+    : planKind === "pack"
+      ? `Continuar com o pack de ${packQuantity} — ${formatPrice(subtotalCents)}`
+      : `Continuar com ${qty} ${qty === 1 ? "número" : "números"} — ${formatPrice(subtotalCents)}`;
 
   return (
-    <div className="fixed inset-x-0 bottom-16 z-40 border-t border-line bg-night/95 backdrop-blur lg:bottom-0">
+    <div className="fixed inset-x-0 bottom-[84px] z-40 border-t border-line bg-night/95 backdrop-blur lg:bottom-0">
       <div className="mx-auto max-w-[1360px] px-4 py-3 sm:px-6">
-        {/* Chips dos números escolhidos */}
-        <div className="flex gap-1.5 overflow-x-auto pb-2">
-          {selected.map((n) => (
-            <button
-              key={n}
-              type="button"
-              onClick={() => onRemove(n)}
-              className="group flex shrink-0 items-center gap-1 border border-signal/60 bg-signal/10 px-2 py-1 font-mono text-xs text-white"
-              aria-label={`Remover número ${padNumber(n, padding)}`}
-            >
-              {padNumber(n, padding)}
-              <span aria-hidden="true" className="text-signal group-hover:text-white">
-                ×
-              </span>
-            </button>
-          ))}
-        </div>
+        {selectedNumbers.length > 0 && (
+          <div className="flex gap-1.5 overflow-x-auto pb-2">
+            {selectedNumbers.map((n) => (
+              <button
+                key={n}
+                type="button"
+                onClick={() => onRemove?.(n)}
+                disabled={!onRemove}
+                className="group flex shrink-0 items-center gap-1 border border-signal/60 bg-signal/10 px-2 py-1 font-mono text-xs text-white disabled:cursor-default"
+                aria-label={onRemove ? `Remover número ${padNumber(n, padding)}` : `Número ${padNumber(n, padding)}`}
+              >
+                {padNumber(n, padding)}
+                {onRemove && (
+                  <span aria-hidden="true" className="text-signal group-hover:text-white">
+                    ×
+                  </span>
+                )}
+              </button>
+            ))}
+          </div>
+        )}
 
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div aria-live="polite" className="flex items-baseline gap-3">
-            <span className="font-mono text-lg font-semibold text-white tabular-nums">
-              {selected.length}
-            </span>
+            <span className="font-mono text-lg font-semibold text-white tabular-nums">{qty}</span>
             <span className="text-xs uppercase tracking-[0.12em] text-smoke">
-              {selected.length === 1 ? "número" : "números"} ·{" "}
-              <span className="font-mono text-white">{formatPrice(totalCents)}</span>
-            </span>
-            <span className="hidden text-[11px] text-smoke/60 sm:inline">
-              ({formatPrice(priceCents)} cada · recalculado no servidor)
+              {qty === 1 ? "número" : "números"} ·{" "}
+              <span className="font-mono text-white">{formatPrice(subtotalCents)}</span>
             </span>
           </div>
 
@@ -70,22 +83,15 @@ export default function SelectionSummary({
             </button>
             <button
               type="button"
-              disabled
-              aria-disabled="true"
-              title="Reserva e pagamento via Pix — em breve"
-              className="cursor-not-allowed bg-signal/40 px-6 py-3 text-sm font-bold uppercase tracking-[0.12em] text-white/70"
+              onClick={onContinue}
+              disabled={!complete}
+              className="bg-signal px-6 py-3 text-sm font-bold uppercase tracking-[0.12em] text-white transition-colors hover:bg-signal-dark disabled:cursor-not-allowed disabled:bg-signal/40 disabled:text-white/70"
               style={{ clipPath: "polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%)" }}
             >
-              Reservar — em breve
+              {ctaLabel}
             </button>
           </div>
         </div>
-
-        {overLimit && (
-          <p className="mt-1.5 text-xs text-signal">
-            Máximo de {maxPerOrder} números por pedido. Remova alguns para continuar.
-          </p>
-        )}
       </div>
     </div>
   );

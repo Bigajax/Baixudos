@@ -38,6 +38,8 @@ export default function WhatsAppButton() {
 
   const hiddenByHero = pathname === "/" && heroVisible;
 
+  if (pathname.startsWith("/admin")) return null;
+
   return (
     <a
       href={waLink(messageFor(pathname))}

@@ -5,9 +5,15 @@ import { notFound } from "next/navigation";
 import { allEvents, getEvent } from "@/content/events";
 import { site } from "@/content/site";
 import { waLink } from "@/lib/wa";
+import { getEventTickets, getEventNumberOffer } from "@/lib/checkout/queries";
+import { paymentProviderName } from "@/lib/payments";
 import Countdown from "@/components/Countdown";
 import TicketCheckout from "@/components/TicketCheckout";
+import EventTicketPurchase from "@/components/raffle/EventTicketPurchase";
 import Reveal from "@/components/Reveal";
+
+// Lê ingressos do banco a cada request (disponibilidade fresca).
+export const dynamic = "force-dynamic";
 
 export function generateStaticParams() {
   return allEvents.map((e) => ({ slug: e.slug }));
@@ -32,6 +38,11 @@ export default async function EventoPage(props: PageProps<"/eventos/[slug]">) {
   const hasDate = Boolean(event.date);
   const isPast = event.status === "realizado";
   const hasTickets = event.batches.some((b) => b.available && b.priceCents !== null);
+
+  // Fluxo de ingresso DB-backed (Pix próprio) quando o evento tem ingressos ativos.
+  const dbTickets = isPast ? null : await getEventTickets(slug);
+  const numberOffer = dbTickets ? await getEventNumberOffer(dbTickets.eventId) : null;
+  const sandbox = paymentProviderName === "sandbox";
 
   const eventSchema = {
     "@context": "https://schema.org",
@@ -126,7 +137,14 @@ export default async function EventoPage(props: PageProps<"/eventos/[slug]">) {
                 {hasDate && !isPast && <Countdown date={event.date!} />}
 
                 {!isPast &&
-                  (event.ticketUrl ? (
+                  (dbTickets ? (
+                    <EventTicketPurchase
+                      tickets={dbTickets.tickets}
+                      event={{ title: event.name, location: event.venue }}
+                      numberOffer={numberOffer}
+                      sandbox={sandbox}
+                    />
+                  ) : event.ticketUrl ? (
                     <a
                       href={event.ticketUrl}
                       target="_blank"
