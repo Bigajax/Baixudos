@@ -5,6 +5,7 @@ import { padNumber } from "@/lib/raffle/types";
 import type { RaffleCampaign, GridData } from "@/lib/raffle/types";
 import type { Pack } from "@/lib/checkout/types";
 import type { TicketOffer } from "@/lib/checkout/queries";
+import Countdown from "@/components/Countdown";
 import ParticipationChooser from "./ParticipationChooser";
 import NumberGrid from "./NumberGrid";
 import SelectionSummary from "./SelectionSummary";
@@ -18,12 +19,14 @@ export default function CampaignParticipation({
   packs,
   ticketOffer,
   sandbox,
+  bestSellerId,
 }: {
   campaign: RaffleCampaign;
   grid: GridData;
   packs: Pack[];
   ticketOffer: TicketOffer | null;
   sandbox: boolean;
+  bestSellerId: string | null;
 }) {
   const [mode, setMode] = useState<"free" | "pack">("free");
   const [pack, setPack] = useState<Pack | null>(null);
@@ -151,6 +154,13 @@ export default function CampaignParticipation({
         )}
       </div>
 
+      {campaign.salesCloseAt && (
+        <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 border border-signal/40 bg-signal/[0.06] p-3">
+          <span className="text-sm font-semibold text-white">Vendas encerram em</span>
+          <Countdown date={campaign.salesCloseAt} />
+        </div>
+      )}
+
       {/* 1. Packs */}
       <div className="mt-8">
         <ParticipationChooser
@@ -158,6 +168,7 @@ export default function CampaignParticipation({
           basePriceCents={campaign.priceCents}
           mode={mode}
           packId={pack?.id ?? null}
+          bestSellerId={bestSellerId}
           onChooseFree={chooseFree}
           onChoosePack={choosePack}
         />

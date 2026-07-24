@@ -193,6 +193,31 @@ export async function getEventNumberOffer(eventId: string): Promise<EventNumberO
   }
 }
 
+/** Pack mais vendido (só pedidos pagos). null se não houver dados. */
+export async function getBestSellerPackId(campaignId: string): Promise<string | null> {
+  try {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("order_items")
+      .select("campaign_pack_id, orders!inner(status)")
+      .eq("item_type", "campaign_pack")
+      .eq("campaign_id", campaignId)
+      .eq("orders.status", "paid");
+    if (!data || data.length === 0) return null;
+    const counts = new Map<string, number>();
+    for (const row of data as unknown as { campaign_pack_id: string | null }[]) {
+      if (row.campaign_pack_id) counts.set(row.campaign_pack_id, (counts.get(row.campaign_pack_id) ?? 0) + 1);
+    }
+    let best: string | null = null;
+    let max = 0;
+    for (const [id, n] of counts) if (n > max) { max = n; best = id; }
+    return best;
+  } catch (e) {
+    console.error("[checkout] getBestSellerPackId falhou:", e);
+    return null;
+  }
+}
+
 interface OfferRow {
   id: string;
   title: string;

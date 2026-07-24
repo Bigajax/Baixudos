@@ -2,10 +2,11 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { RaffleCampaign, GridData, NumberStatus } from "@/lib/raffle/types";
+import { padNumber } from "@/lib/raffle/types";
 import NumberCell from "./NumberCell";
 import NumberGridToolbar from "./NumberGridToolbar";
 import NumberGridLegend from "./NumberGridLegend";
-import type { CellState } from "./status-meta";
+import { CELL_LABEL, isInteractive, type CellState } from "./status-meta";
 
 /**
  * Grade CONTROLADA: seleção vive no componente pai (CampaignParticipation).
@@ -39,6 +40,7 @@ export default function NumberGrid({
   }, [grid.taken]);
 
   const [filter, setFilter] = useState<"all" | "available">("all");
+  const [view, setView] = useState<"grade" | "lista">("grade");
   const [activeNumber, setActiveNumber] = useState(1);
   const [highlight, setHighlight] = useState<number | null>(null);
 
@@ -125,6 +127,23 @@ export default function NumberGrid({
         hasSelection={selected.size > 0}
       />
 
+      <div className="mt-4 flex overflow-hidden border border-line" role="tablist" aria-label="Modo de exibição">
+        {(["grade", "lista"] as const).map((v) => (
+          <button
+            key={v}
+            type="button"
+            role="tab"
+            aria-selected={view === v}
+            onClick={() => setView(v)}
+            className={`flex-1 py-2.5 text-xs font-bold uppercase tracking-[0.12em] transition-colors ${
+              view === v ? "bg-signal text-white" : "text-smoke hover:text-white"
+            }`}
+          >
+            {v === "grade" ? "Grade" : "Lista"}
+          </button>
+        ))}
+      </div>
+
       {maxSelectable != null && (
         <p className="mt-3 text-sm text-smoke" aria-live="polite">
           <span className="font-mono text-white">{selected.size}</span> de{" "}
@@ -138,33 +157,62 @@ export default function NumberGrid({
         </p>
       )}
 
-      <div
-        ref={gridRef}
-        role="group"
-        aria-label="Grade de números. Use as setas para navegar e Enter para selecionar."
-        onKeyDown={onKeyDown}
-        className="mt-4 grid grid-cols-[repeat(auto-fill,minmax(2.75rem,1fr))] gap-1.5"
-      >
-        {Array.from({ length: total }, (_, i) => i + 1).map((n) => {
-          const isSel = selected.has(n);
-          const taken = takenMap.get(n);
-          const state: CellState = isSel ? "selected" : (taken ?? "available");
-          const isHidden = filter === "available" && !!taken && !isSel;
-          return (
-            <NumberCell
-              key={n}
-              number={n}
-              padding={campaign.numberPadding}
-              state={state}
-              tabbable={n === tabbableNumber}
-              hidden={isHidden}
-              highlight={highlight === n}
-              onToggle={onToggle}
-              onFocusNumber={onFocusNumber}
-            />
-          );
-        })}
-      </div>
+      {view === "grade" ? (
+        <div
+          ref={gridRef}
+          role="group"
+          aria-label="Grade de números. Use as setas para navegar e Enter para selecionar."
+          onKeyDown={onKeyDown}
+          className="mt-4 grid grid-cols-[repeat(auto-fill,minmax(2.75rem,1fr))] gap-1.5"
+        >
+          {Array.from({ length: total }, (_, i) => i + 1).map((n) => {
+            const isSel = selected.has(n);
+            const taken = takenMap.get(n);
+            const state: CellState = isSel ? "selected" : (taken ?? "available");
+            const isHidden = filter === "available" && !!taken && !isSel;
+            return (
+              <NumberCell
+                key={n}
+                number={n}
+                padding={campaign.numberPadding}
+                state={state}
+                tabbable={n === tabbableNumber}
+                hidden={isHidden}
+                highlight={highlight === n}
+                onToggle={onToggle}
+                onFocusNumber={onFocusNumber}
+              />
+            );
+          })}
+        </div>
+      ) : (
+        <ul className="mt-4 max-h-[460px] divide-y divide-line overflow-y-auto border border-line [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          {visibleArr.map((n) => {
+            const isSel = selected.has(n);
+            const taken = takenMap.get(n);
+            const state: CellState = isSel ? "selected" : (taken ?? "available");
+            const interactive = isInteractive(state);
+            return (
+              <li key={n}>
+                <button
+                  type="button"
+                  disabled={!interactive}
+                  onClick={() => interactive && onToggle(n)}
+                  aria-pressed={interactive ? isSel : undefined}
+                  className={`flex w-full items-center justify-between px-4 py-2.5 text-left transition-colors disabled:cursor-not-allowed ${
+                    isSel ? "bg-signal/10" : "hover:bg-graphite"
+                  }`}
+                >
+                  <span className={`font-mono text-sm tabular-nums ${isSel ? "text-signal" : "text-white"}`}>
+                    {padNumber(n, campaign.numberPadding)}
+                  </span>
+                  <span className={`text-xs ${isSel ? "text-signal" : "text-smoke"}`}>{CELL_LABEL[state]}</span>
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      )}
     </div>
   );
 }

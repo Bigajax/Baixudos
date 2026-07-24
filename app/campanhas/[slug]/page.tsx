@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { site } from "@/content/site";
 import { getRaffleCampaign, getCampaignGrid } from "@/lib/raffle/queries";
-import { getCampaignPacks, getCampaignTicketOffer } from "@/lib/checkout/queries";
+import { getCampaignPacks, getCampaignTicketOffer, getBestSellerPackId } from "@/lib/checkout/queries";
 import { paymentProviderName } from "@/lib/payments";
 import CampaignHero from "@/components/raffle/CampaignHero";
 import HowToParticipate from "@/components/raffle/HowToParticipate";
@@ -11,6 +11,7 @@ import ResultBanner from "@/components/raffle/ResultBanner";
 import EventSection from "@/components/raffle/EventSection";
 import CampaignDocs from "@/components/raffle/CampaignDocs";
 import CampaignFAQ from "@/components/raffle/CampaignFAQ";
+import Testimonials from "@/components/home/Testimonials";
 
 // Rota dinâmica: a grade muda; lê do Supabase a cada request (RLS).
 export const dynamic = "force-dynamic";
@@ -35,10 +36,11 @@ export default async function CampanhaPage(props: PageProps<"/campanhas/[slug]">
   const campaign = await getRaffleCampaign(slug);
   if (!campaign) notFound();
 
-  const [grid, packs, ticketOffer] = await Promise.all([
+  const [grid, packs, ticketOffer, bestSellerId] = await Promise.all([
     getCampaignGrid(campaign.id, campaign.totalNumbers),
     getCampaignPacks(campaign.id),
     getCampaignTicketOffer(campaign.id),
+    getBestSellerPackId(campaign.id),
   ]);
   const sandbox = paymentProviderName === "sandbox";
 
@@ -52,6 +54,7 @@ export default async function CampanhaPage(props: PageProps<"/campanhas/[slug]">
           packs={packs}
           ticketOffer={ticketOffer}
           sandbox={sandbox}
+          bestSellerId={bestSellerId}
         />
       ) : campaign.status === "drawn" ? (
         <ResultBanner campaign={campaign} />
@@ -66,6 +69,7 @@ export default async function CampanhaPage(props: PageProps<"/campanhas/[slug]">
       )}
       <HowToParticipate />
       <EventSection campaign={campaign} />
+      <Testimonials />
       <CampaignDocs campaign={campaign} />
       <CampaignFAQ />
     </>

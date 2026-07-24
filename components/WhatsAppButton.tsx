@@ -45,6 +45,7 @@ export default function WhatsAppButton() {
       href={waLink(messageFor(pathname))}
       target="_blank"
       rel="noopener noreferrer"
+      data-checkout-hide=""
       aria-label="Falar com a Baixudos.PR no WhatsApp"
       className={`fixed bottom-[calc(4.5rem+env(safe-area-inset-bottom))] right-3 z-30 flex h-12 w-12 items-center justify-center rounded-full bg-[#25d366] shadow-[0_4px_18px_rgba(0,0,0,0.45)] transition-[opacity,transform] duration-200 hover:scale-105 lg:bottom-5 lg:right-5 lg:h-14 lg:w-14 ${
         hiddenByHero ? "pointer-events-none translate-y-2 opacity-0" : "opacity-100"

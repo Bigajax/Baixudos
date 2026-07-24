@@ -8,6 +8,7 @@ interface ChooserProps {
   basePriceCents: number;
   mode: "free" | "pack";
   packId: string | null;
+  bestSellerId: string | null;
   onChooseFree: () => void;
   onChoosePack: (pack: Pack) => void;
 }
@@ -23,13 +24,14 @@ function Check() {
 }
 
 function Card({
-  active, big, label, price, discountPct, onSelect,
+  active, big, label, price, discountPct, bestSeller, onSelect,
 }: {
   active: boolean;
   big: string;
   label: string;
   price: string;
   discountPct: number | null;
+  bestSeller?: boolean;
   onSelect: () => void;
 }) {
   return (
@@ -37,10 +39,15 @@ function Card({
       type="button"
       aria-pressed={active}
       onClick={onSelect}
-      className={`relative flex min-w-[130px] flex-1 snap-start flex-col items-center border p-4 text-center transition-colors ${
+      className={`relative flex min-w-[130px] flex-1 snap-start flex-col items-center border p-4 pt-5 text-center transition-colors ${
         active ? "border-signal bg-signal/[0.07]" : "border-line bg-panel hover:border-signal/60"
       }`}
     >
+      {bestSeller && (
+        <span className="absolute -top-2 left-1/2 -translate-x-1/2 whitespace-nowrap bg-signal px-2 py-0.5 font-mono text-[9px] font-bold uppercase tracking-[0.12em] text-white">
+          ★ Mais vendido
+        </span>
+      )}
       {active && <Check />}
       <span className="display text-4xl leading-none text-white">{big}</span>
       <span className="mt-1.5 text-xs text-smoke">{label}</span>
@@ -63,6 +70,7 @@ export default function ParticipationChooser({
   basePriceCents,
   mode,
   packId,
+  bestSellerId,
   onChooseFree,
   onChoosePack,
 }: ChooserProps) {
@@ -92,6 +100,7 @@ export default function ParticipationChooser({
               label={pack.title}
               price={formatPrice(pack.promotionalPriceCents)}
               discountPct={discountPct}
+              bestSeller={pack.id === bestSellerId}
               onSelect={() => onChoosePack(pack)}
             />
           );

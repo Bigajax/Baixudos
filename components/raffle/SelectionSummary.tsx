@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { formatPrice } from "@/lib/format";
 import { padNumber } from "@/lib/raffle/types";
 
@@ -42,7 +42,19 @@ export default function SelectionSummary({
   onRemove,
 }: SummaryProps) {
   const [open, setOpen] = useState(false);
-  if (!planKind && selectedNumbers.length === 0) return null;
+  const active = selectedNumbers.length > 0 || planKind === "pack";
+
+  // Sinaliza "checkout ativo" para o app esconder a pill de navegação e o FAB
+  // no mobile enquanto a barra de continuar está no rodapé.
+  useEffect(() => {
+    if (!active) return;
+    document.documentElement.dataset.checkout = "1";
+    return () => {
+      delete document.documentElement.dataset.checkout;
+    };
+  }, [active]);
+
+  if (!active) return null;
 
   const qty = planKind === "pack" ? (packQuantity ?? 0) : selectedNumbers.length;
   const ctaLabel = complete
@@ -52,7 +64,8 @@ export default function SelectionSummary({
       : "Selecione";
 
   return (
-    <div className="fixed inset-x-0 bottom-[84px] z-40 border-t border-line bg-night/95 backdrop-blur lg:bottom-0">
+    <div className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-night/95 backdrop-blur"
+      style={{ paddingBottom: "env(safe-area-inset-bottom)" }}>
       <div className="mx-auto max-w-[1360px] px-4 py-3 sm:px-6">
         {open && selectedNumbers.length > 0 && (
           <div className="mb-2.5 flex gap-1.5 overflow-x-auto pb-1">
