@@ -53,7 +53,7 @@ begin
       '[DEMO] A apuração e a entrega do prêmio acontecem durante o evento. Programação a confirmar.',
       '[A CONFIRMAR] Endereço completo do evento.',
       'https://www.google.com/maps/search/?api=1&query=Race+Park+Maring%C3%A1+Motorsport',
-      '/images/gol-vermelho.jpg',
+      '/images/gol-vermelho-studio.jpg',
       '/regulamento-gol-vermelho-demo.pdf',  -- placeholder DEMO
       'WhatsApp oficial da Baixudos.PR',
       '[A CONFIRMAR conforme regulamento oficial]',
@@ -78,7 +78,7 @@ begin
   -- Mídia principal (placeholder local). Idempotente.
   if not exists (select 1 from public.campaign_media where campaign_id = v_id) then
     insert into public.campaign_media (campaign_id, kind, url, alt_text, sort_order)
-    values (v_id, 'image', '/images/gol-vermelho.jpg',
+    values (v_id, 'image', '/images/gol-vermelho-studio.jpg',
             'Gol vermelho rebaixado à noite (DEMO)', 0);
   end if;
 end $$;
