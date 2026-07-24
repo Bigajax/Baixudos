@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { formatPrice } from "@/lib/format";
 import { padNumber } from "@/lib/raffle/types";
 
@@ -15,6 +16,20 @@ interface SummaryProps {
   onRemove?: (n: number) => void;
 }
 
+function TicketIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className="h-5 w-5 text-signal" aria-hidden="true">
+      <path
+        d="M4 8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2a2 2 0 1 0 0 4v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2a2 2 0 1 0 0-4V8Z"
+        stroke="currentColor"
+        strokeWidth="1.7"
+        strokeLinejoin="round"
+      />
+      <path d="M14 6v12" stroke="currentColor" strokeWidth="1.7" strokeDasharray="2.5 2.5" />
+    </svg>
+  );
+}
+
 export default function SelectionSummary({
   planKind,
   packQuantity,
@@ -26,24 +41,21 @@ export default function SelectionSummary({
   onContinue,
   onRemove,
 }: SummaryProps) {
-  // Nada escolhido ainda → não mostra a barra (o seletor é o CTA).
+  const [open, setOpen] = useState(false);
   if (!planKind && selectedNumbers.length === 0) return null;
 
   const qty = planKind === "pack" ? (packQuantity ?? 0) : selectedNumbers.length;
-
-  const ctaLabel = !complete
-    ? planKind === "pack"
-      ? `Selecione ${packQuantity} números`
-      : "Selecione seus números"
+  const ctaLabel = complete
+    ? "Continuar"
     : planKind === "pack"
-      ? `Continuar com o pack de ${packQuantity} — ${formatPrice(subtotalCents)}`
-      : `Continuar com ${qty} ${qty === 1 ? "número" : "números"} — ${formatPrice(subtotalCents)}`;
+      ? `Faltam ${(packQuantity ?? 0) - selectedNumbers.length}`
+      : "Selecione";
 
   return (
     <div className="fixed inset-x-0 bottom-[84px] z-40 border-t border-line bg-night/95 backdrop-blur lg:bottom-0">
       <div className="mx-auto max-w-[1360px] px-4 py-3 sm:px-6">
-        {selectedNumbers.length > 0 && (
-          <div className="flex gap-1.5 overflow-x-auto pb-2">
+        {open && selectedNumbers.length > 0 && (
+          <div className="mb-2.5 flex gap-1.5 overflow-x-auto pb-1">
             {selectedNumbers.map((n) => (
               <button
                 key={n}
@@ -54,43 +66,59 @@ export default function SelectionSummary({
                 aria-label={onRemove ? `Remover número ${padNumber(n, padding)}` : `Número ${padNumber(n, padding)}`}
               >
                 {padNumber(n, padding)}
-                {onRemove && (
-                  <span aria-hidden="true" className="text-signal group-hover:text-white">
-                    ×
-                  </span>
-                )}
+                {onRemove && <span aria-hidden="true" className="text-signal group-hover:text-white">×</span>}
               </button>
             ))}
           </div>
         )}
 
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div aria-live="polite" className="flex items-baseline gap-3">
-            <span className="font-mono text-lg font-semibold text-white tabular-nums">{qty}</span>
-            <span className="text-xs uppercase tracking-[0.12em] text-smoke">
-              {qty === 1 ? "número" : "números"} ·{" "}
-              <span className="font-mono text-white">{formatPrice(subtotalCents)}</span>
+        <div className="flex items-stretch gap-3">
+          <button
+            type="button"
+            onClick={() => setOpen((v) => !v)}
+            className="flex min-w-0 flex-1 items-center gap-3 border border-line bg-panel px-4 py-2.5 text-left sm:flex-none sm:min-w-[220px]"
+            aria-expanded={open}
+          >
+            <TicketIcon />
+            <span className="min-w-0">
+              <span className="block text-sm font-semibold text-white">
+                {qty} {qty === 1 ? "número" : "números"}
+              </span>
+              <span className="block font-mono text-[15px] font-semibold text-signal">
+                {formatPrice(subtotalCents)}
+              </span>
             </span>
-          </div>
+            {selectedNumbers.length > 0 && (
+              <svg viewBox="0 0 24 24" className={`ml-auto h-4 w-4 shrink-0 text-smoke transition-transform ${open ? "rotate-180" : ""}`} fill="none" aria-hidden="true">
+                <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            )}
+          </button>
 
-          <div className="flex items-center gap-3">
-            <button
-              type="button"
-              onClick={onClear}
-              className="text-xs font-semibold uppercase tracking-[0.1em] text-smoke transition-colors hover:text-signal"
-            >
+          <button
+            type="button"
+            onClick={onContinue}
+            disabled={!complete}
+            className="flex flex-1 items-center justify-center gap-2 bg-signal px-6 text-sm font-bold uppercase tracking-[0.1em] text-white transition-colors hover:bg-signal-dark disabled:cursor-not-allowed disabled:bg-signal/40 disabled:text-white/70"
+            style={{ clipPath: "polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%)" }}
+          >
+            {ctaLabel}
+            {complete && <span aria-hidden="true" className="text-base">→</span>}
+          </button>
+        </div>
+
+        <div className="mt-1.5 flex items-center justify-between text-[11px] text-smoke/70">
+          <span className="flex items-center gap-1.5">
+            <svg viewBox="0 0 24 24" className="h-3 w-3" fill="none" aria-hidden="true">
+              <path d="M6 10V8a6 6 0 0 1 12 0v2M5 10h14v9H5v-9Z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
+            </svg>
+            Pagamento seguro · Pix
+          </span>
+          {selectedNumbers.length > 0 && (
+            <button type="button" onClick={onClear} className="uppercase tracking-[0.1em] transition-colors hover:text-signal">
               Limpar
             </button>
-            <button
-              type="button"
-              onClick={onContinue}
-              disabled={!complete}
-              className="bg-signal px-6 py-3 text-sm font-bold uppercase tracking-[0.12em] text-white transition-colors hover:bg-signal-dark disabled:cursor-not-allowed disabled:bg-signal/40 disabled:text-white/70"
-              style={{ clipPath: "polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%)" }}
-            >
-              {ctaLabel}
-            </button>
-          </div>
+          )}
         </div>
       </div>
     </div>
