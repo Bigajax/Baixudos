@@ -38,7 +38,7 @@ export default function WhatsAppButton() {
 
   const hiddenByHero = pathname === "/" && heroVisible;
 
-  if (pathname.startsWith("/admin")) return null;
+  if (pathname.startsWith("/admin") || pathname.startsWith("/telao")) return null;
 
   return (
     <a

@@ -1,6 +1,76 @@
 /** Leituras do painel admin (server-only). Usa a sessão autenticada (RLS admin). */
 import "server-only";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
+
+export interface ApuracaoData {
+  campaign: {
+    id: string;
+    slug: string;
+    title: string;
+    prizeTitle: string;
+    status: string;
+    padding: number;
+    resultNumber: number | null;
+    published: boolean;
+    drawMethod: string | null;
+  } | null;
+  confirmedCount: number;
+  winner: { firstName: string | null; orderCode: string | null } | null;
+}
+
+export async function getApuracaoData(): Promise<ApuracaoData> {
+  const supabase = await createClient();
+  const { data: c } = await supabase
+    .from("raffle_campaigns")
+    .select("id,slug,title,prize_title,status,number_padding,result_number,result_published_at,draw_method")
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (!c) return { campaign: null, confirmedCount: 0, winner: null };
+
+  const { count } = await supabase
+    .from("campaign_numbers")
+    .select("*", { count: "exact", head: true })
+    .eq("campaign_id", c.id)
+    .eq("status", "confirmed");
+
+  let winner: ApuracaoData["winner"] = null;
+  if (c.result_number != null) {
+    const admin = createAdminClient();
+    const { data: n } = await admin
+      .from("campaign_numbers")
+      .select("order_item_id, order_items(order_id, orders(public_code, customers(full_name)))")
+      .eq("campaign_id", c.id)
+      .eq("number", c.result_number)
+      .maybeSingle();
+    const row = n as unknown as {
+      order_items: { orders: { public_code: string; customers: { full_name: string } | null } | null } | null;
+    } | null;
+    const ord = row?.order_items?.orders;
+    if (ord) {
+      const first = ord.customers?.full_name?.trim().split(/\s+/)[0] ?? null;
+      winner = { firstName: first, orderCode: ord.public_code };
+    }
+  }
+
+  return {
+    campaign: {
+      id: c.id,
+      slug: c.slug,
+      title: c.title,
+      prizeTitle: c.prize_title,
+      status: c.status,
+      padding: c.number_padding,
+      resultNumber: c.result_number,
+      published: Boolean(c.result_published_at),
+      drawMethod: c.draw_method,
+    },
+    confirmedCount: count ?? 0,
+    winner,
+  };
+}
 
 async function countNumbers(campaignId: string, status: string): Promise<number> {
   const supabase = await createClient();

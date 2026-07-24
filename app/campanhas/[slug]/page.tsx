@@ -7,6 +7,7 @@ import { paymentProviderName } from "@/lib/payments";
 import CampaignHero from "@/components/raffle/CampaignHero";
 import HowToParticipate from "@/components/raffle/HowToParticipate";
 import CampaignParticipation from "@/components/raffle/CampaignParticipation";
+import ResultBanner from "@/components/raffle/ResultBanner";
 import EventSection from "@/components/raffle/EventSection";
 import CampaignDocs from "@/components/raffle/CampaignDocs";
 import CampaignFAQ from "@/components/raffle/CampaignFAQ";
@@ -44,13 +45,25 @@ export default async function CampanhaPage(props: PageProps<"/campanhas/[slug]">
   return (
     <>
       <CampaignHero campaign={campaign} counts={grid.counts} />
-      <CampaignParticipation
-        campaign={campaign}
-        grid={grid}
-        packs={packs}
-        ticketOffer={ticketOffer}
-        sandbox={sandbox}
-      />
+      {campaign.status === "published" ? (
+        <CampaignParticipation
+          campaign={campaign}
+          grid={grid}
+          packs={packs}
+          ticketOffer={ticketOffer}
+          sandbox={sandbox}
+        />
+      ) : campaign.status === "drawn" ? (
+        <ResultBanner campaign={campaign} />
+      ) : (
+        <section id="numeros" className="mx-auto max-w-[1360px] scroll-mt-24 px-4 py-16 text-center sm:px-6 md:py-24">
+          <p className="display text-2xl text-white sm:text-3xl">Vendas encerradas</p>
+          <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-smoke">
+            As vendas desta campanha foram encerradas. A apuração e a premiação acontecem no evento —
+            acompanhe o resultado aqui.
+          </p>
+        </section>
+      )}
       <HowToParticipate />
       <EventSection campaign={campaign} />
       <CampaignDocs campaign={campaign} />

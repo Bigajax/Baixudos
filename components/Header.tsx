@@ -52,7 +52,7 @@ export default function Header() {
 
   const ticketHref = nextEvent.ticketUrl ?? `/eventos/${nextEvent.slug}`;
 
-  if (pathname.startsWith("/admin")) return null;
+  if (pathname.startsWith("/admin") || pathname.startsWith("/telao")) return null;
 
   return (
     <>

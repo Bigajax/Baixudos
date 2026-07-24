@@ -30,17 +30,19 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
   // 1) Preço autoritativo
   const quote = await buildQuote({ campaign, ticket });
 
-  // 2) TTL da reserva (da campanha, quando houver)
+  // 2) TTL da reserva (da campanha, quando houver) + trava de vendas abertas
   let ttlMinutes = 15;
   let regulationVersion: string | null = null;
   if (campaign) {
     const { data: c } = await sb
       .from("raffle_campaigns")
-      .select("reservation_ttl_minutes,regulation_version")
+      .select("reservation_ttl_minutes,regulation_version,status")
       .eq("id", campaign.campaignId)
       .maybeSingle();
-    if (c?.reservation_ttl_minutes) ttlMinutes = c.reservation_ttl_minutes as number;
-    regulationVersion = (c?.regulation_version as string) ?? null;
+    if (!c) throw new OrderError("Campanha inválida.");
+    if (c.status !== "published") throw new OrderError("As vendas desta campanha estão encerradas.");
+    if (c.reservation_ttl_minutes) ttlMinutes = c.reservation_ttl_minutes as number;
+    regulationVersion = (c.regulation_version as string) ?? null;
   }
   const expiresAt = new Date(Date.now() + ttlMinutes * 60_000).toISOString();
 

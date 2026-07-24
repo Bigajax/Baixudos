@@ -39,7 +39,7 @@ const ticketIcon = (
 export default function MobileTabBar() {
   const pathname = usePathname();
 
-  if (pathname.startsWith("/admin")) return null;
+  if (pathname.startsWith("/admin") || pathname.startsWith("/telao")) return null;
 
   const items = [
     ...(site.rafflesEnabled

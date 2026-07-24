@@ -53,3 +53,46 @@ export async function togglePack(formData: FormData) {
   await supabase.from("campaign_packs").update({ active: !active }).eq("id", id);
   revalidatePath("/admin/packs");
 }
+
+// ---------- Apuração ----------
+
+export async function setCampaignStatus(formData: FormData) {
+  const supabase = await createClient();
+  const id = String(formData.get("campaignId"));
+  const status = String(formData.get("status")); // published | closed | paused
+  await supabase.from("raffle_campaigns").update({ status }).eq("id", id);
+  revalidatePath("/admin/apuracao");
+}
+
+/** Registra o número contemplado (conforme método oficial). NÃO publica. */
+export async function saveResult(formData: FormData) {
+  const supabase = await createClient();
+  const id = String(formData.get("campaignId"));
+  const num = parseInt(String(formData.get("resultNumber") ?? ""), 10);
+  const method = String(formData.get("drawMethod") ?? "").trim() || null;
+  if (!id || Number.isNaN(num)) redirect("/admin/apuracao?erro=1");
+  await supabase.from("raffle_campaigns").update({ result_number: num, draw_method: method }).eq("id", id);
+  revalidatePath("/admin/apuracao");
+  redirect("/admin/apuracao");
+}
+
+/** Publica o resultado: marca o número como contemplado e a campanha como apurada. */
+export async function publishResult(formData: FormData) {
+  const supabase = await createClient();
+  const id = String(formData.get("campaignId"));
+  const num = parseInt(String(formData.get("resultNumber") ?? ""), 10);
+  if (!id || Number.isNaN(num)) redirect("/admin/apuracao?erro=1");
+  await supabase
+    .from("campaign_numbers")
+    .update({ status: "won" })
+    .eq("campaign_id", id)
+    .eq("number", num)
+    .eq("status", "confirmed");
+  await supabase
+    .from("raffle_campaigns")
+    .update({ status: "drawn", result_published_at: new Date().toISOString() })
+    .eq("id", id);
+  revalidatePath("/admin/apuracao");
+  revalidatePath("/campanhas/[slug]", "page");
+  redirect("/admin/apuracao");
+}
