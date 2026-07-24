@@ -21,12 +21,16 @@ export const CELL_CLASS: Record<CellState, string> = {
     "border-line bg-panel text-smoke hover:border-signal hover:text-white",
   selected:
     "border-signal bg-signal text-white shadow-[0_0_10px_rgba(255,16,16,0.55)]",
-  reserved: "border-line/40 bg-graphite text-smoke/40 cursor-not-allowed",
-  pending: "border-line/40 bg-graphite text-smoke/40 cursor-not-allowed",
-  confirmed: "border-line/40 bg-graphite text-smoke/35 cursor-not-allowed",
-  blocked: "border-line/30 bg-graphite/60 text-smoke/25 cursor-not-allowed",
-  cancelled: "border-line/30 bg-graphite/60 text-smoke/25 cursor-not-allowed",
-  won: "border-signal/60 bg-signal/20 text-white cursor-not-allowed",
+  // Reservado / aguardando pagamento — tom avermelhado (em espera)
+  reserved: "border-signal/50 bg-signal/15 text-signal/90 cursor-not-allowed",
+  pending: "border-signal/50 bg-signal/15 text-signal/90 cursor-not-allowed",
+  // Vendido — bloco cinza claro sólido + número riscado
+  confirmed: "border-line bg-line text-white/45 line-through cursor-not-allowed",
+  // Indisponível / cancelado — mais escuro, borda tracejada
+  blocked: "border-dashed border-line/50 bg-night text-smoke/30 cursor-not-allowed",
+  cancelled: "border-dashed border-line/50 bg-night text-smoke/30 cursor-not-allowed",
+  // Contemplado
+  won: "border-signal bg-signal/25 text-white cursor-not-allowed",
 };
 
 /** Estados interativos (podem ser selecionados/deselecionados pelo usuário). */
@@ -43,14 +47,14 @@ export const LEGEND_ITEMS: CellState[] = [
   "blocked",
 ];
 
-/** Amostra de cor/borda da legenda por estado. */
+/** Amostra de cor/borda da legenda por estado (espelha CELL_CLASS). */
 export const LEGEND_SWATCH: Record<CellState, string> = {
   available: "border-line bg-panel",
   selected: "border-signal bg-signal",
-  reserved: "border-line/40 bg-graphite",
-  pending: "border-line/40 bg-graphite",
-  confirmed: "border-line/40 bg-graphite",
-  blocked: "border-line/30 bg-graphite/60",
-  cancelled: "border-line/30 bg-graphite/60",
-  won: "border-signal/60 bg-signal/20",
+  reserved: "border-signal/50 bg-signal/15",
+  pending: "border-signal/50 bg-signal/15",
+  confirmed: "border-line bg-line",
+  blocked: "border-dashed border-line/50 bg-night",
+  cancelled: "border-dashed border-line/50 bg-night",
+  won: "border-signal bg-signal/25",
 };

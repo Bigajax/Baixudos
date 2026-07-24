@@ -122,29 +122,38 @@ function mapCampaign(row: CampaignRow): RaffleCampaign {
 
 /** Uma campanha visível (não-draft) pelo slug, com sua mídia. */
 export async function getRaffleCampaign(slug: string): Promise<RaffleCampaign | null> {
-  const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("raffle_campaigns")
-    .select(
-      "*, campaign_media(kind,url,alt_text,sort_order)",
-    )
-    .eq("slug", slug)
-    .maybeSingle();
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from("raffle_campaigns")
+      .select("*, campaign_media(kind,url,alt_text,sort_order)")
+      .eq("slug", slug)
+      .maybeSingle();
 
-  if (error || !data) return null;
-  return mapCampaign(data as unknown as CampaignRow);
+    if (error || !data) return null;
+    return mapCampaign(data as unknown as CampaignRow);
+  } catch (e) {
+    // Config ausente (env) ou Supabase indisponível — degrada sem 500.
+    console.error("[raffle] getRaffleCampaign falhou:", e);
+    return null;
+  }
 }
 
 /** Lista das campanhas visíveis (índice). */
 export async function listRaffleCampaigns(): Promise<RaffleCampaign[]> {
-  const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("raffle_campaigns")
-    .select("*, campaign_media(kind,url,alt_text,sort_order)")
-    .order("created_at", { ascending: false });
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from("raffle_campaigns")
+      .select("*, campaign_media(kind,url,alt_text,sort_order)")
+      .order("created_at", { ascending: false });
 
-  if (error || !data) return [];
-  return (data as unknown as CampaignRow[]).map(mapCampaign);
+    if (error || !data) return [];
+    return (data as unknown as CampaignRow[]).map(mapCampaign);
+  } catch (e) {
+    console.error("[raffle] listRaffleCampaigns falhou:", e);
+    return [];
+  }
 }
 
 /**
@@ -155,21 +164,27 @@ export async function getCampaignGrid(
   campaignId: string,
   total: number,
 ): Promise<GridData> {
-  const supabase = await createClient();
-  const { data } = await supabase
-    .from("campaign_numbers")
-    .select("number,status")
-    .eq("campaign_id", campaignId)
-    .neq("status", "available")
-    .order("number")
-    .limit(total); // M1: taken é pequeno. M2 troca por RPC agregada se necessário.
-
-  const rows = (data ?? []) as { number: number; status: NumberStatus }[];
-  const taken: TakenNumber[] = rows.map((r) => ({ number: r.number, status: r.status }));
-
   const counts = emptyCounts();
-  for (const t of taken) counts[t.status] += 1;
-  counts.available = Math.max(0, total - taken.length);
+  try {
+    const supabase = await createClient();
+    const { data } = await supabase
+      .from("campaign_numbers")
+      .select("number,status")
+      .eq("campaign_id", campaignId)
+      .neq("status", "available")
+      .order("number")
+      .limit(total); // M1: taken é pequeno. M2 troca por RPC agregada se necessário.
 
-  return { total, counts, taken };
+    const rows = (data ?? []) as { number: number; status: NumberStatus }[];
+    const taken: TakenNumber[] = rows.map((r) => ({ number: r.number, status: r.status }));
+
+    for (const t of taken) counts[t.status] += 1;
+    counts.available = Math.max(0, total - taken.length);
+
+    return { total, counts, taken };
+  } catch (e) {
+    console.error("[raffle] getCampaignGrid falhou:", e);
+    counts.available = total;
+    return { total, counts, taken: [] };
+  }
 }
