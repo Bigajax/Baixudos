@@ -54,6 +54,38 @@ export async function togglePack(formData: FormData) {
   revalidatePath("/admin/packs");
 }
 
+// ---------- Gestão de números ----------
+
+export async function blockNumber(formData: FormData) {
+  const supabase = await createClient();
+  const campaignId = String(formData.get("campaignId"));
+  const number = parseInt(String(formData.get("number") ?? ""), 10);
+  if (!Number.isNaN(number)) {
+    await supabase
+      .from("campaign_numbers")
+      .update({ status: "blocked" })
+      .eq("campaign_id", campaignId)
+      .eq("number", number)
+      .eq("status", "available");
+  }
+  redirect(`/admin/numeros?n=${number}`);
+}
+
+export async function unblockNumber(formData: FormData) {
+  const supabase = await createClient();
+  const campaignId = String(formData.get("campaignId"));
+  const number = parseInt(String(formData.get("number") ?? ""), 10);
+  if (!Number.isNaN(number)) {
+    await supabase
+      .from("campaign_numbers")
+      .update({ status: "available" })
+      .eq("campaign_id", campaignId)
+      .eq("number", number)
+      .eq("status", "blocked");
+  }
+  redirect(`/admin/numeros?n=${number}`);
+}
+
 // ---------- Apuração ----------
 
 export async function setCampaignStatus(formData: FormData) {

@@ -182,6 +182,36 @@ export async function getAdminPacks(campaignId: string): Promise<AdminPack[]> {
   }));
 }
 
+export interface NumberDetail {
+  number: number;
+  status: string;
+  holder: { firstName: string | null; orderCode: string | null } | null;
+}
+
+export async function getNumberDetail(campaignId: string, number: number): Promise<NumberDetail | null> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("campaign_numbers")
+    .select("number,status,order_items(orders(public_code,customers(full_name)))")
+    .eq("campaign_id", campaignId)
+    .eq("number", number)
+    .maybeSingle();
+  if (!data) return null;
+  const row = data as unknown as {
+    number: number;
+    status: string;
+    order_items: { orders: { public_code: string; customers: { full_name: string } | null } | null } | null;
+  };
+  const ord = row.order_items?.orders;
+  return {
+    number: row.number,
+    status: row.status,
+    holder: ord
+      ? { firstName: ord.customers?.full_name?.trim().split(/\s+/)[0] ?? null, orderCode: ord.public_code }
+      : null,
+  };
+}
+
 export interface AdminOrder {
   id: string;
   code: string | null;

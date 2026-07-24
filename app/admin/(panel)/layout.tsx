@@ -9,6 +9,7 @@ const nav = [
   { href: "/admin", label: "Dashboard" },
   { href: "/admin/packs", label: "Packs" },
   { href: "/admin/pedidos", label: "Pedidos" },
+  { href: "/admin/numeros", label: "Números" },
   { href: "/admin/apuracao", label: "Apuração" },
 ];
 
