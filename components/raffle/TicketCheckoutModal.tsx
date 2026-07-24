@@ -325,6 +325,14 @@ export default function TicketCheckoutModal({
                   <NumbersChips numbers={assigned} padding={numberOffer.numberPadding} />
                 </div>
               )}
+              <a
+                href={`/consultar-participacao?codigo=${order.orderCode}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block border border-line py-3 text-center text-sm font-bold uppercase tracking-[0.1em] text-white transition-colors hover:border-signal hover:text-signal"
+              >
+                Consultar minha participação
+              </a>
               <p className="text-xs leading-relaxed text-smoke/70">{TRANSPARENCY_NOTICE}</p>
             </div>
           )}
