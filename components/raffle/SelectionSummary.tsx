@@ -44,14 +44,13 @@ export default function SelectionSummary({
   const [open, setOpen] = useState(false);
   const active = selectedNumbers.length > 0 || planKind === "pack";
 
-  // Sinaliza "checkout ativo" para o app esconder a pill de navegação e o FAB
-  // no mobile enquanto a barra de continuar está no rodapé.
+  // Enquanto a barra de compra está no rodapé, esconde a pill de navegação
+  // e o FAB do WhatsApp (elementos com data-checkout-hide) para não brigarem.
   useEffect(() => {
     if (!active) return;
-    document.documentElement.dataset.checkout = "1";
-    return () => {
-      delete document.documentElement.dataset.checkout;
-    };
+    const els = Array.from(document.querySelectorAll<HTMLElement>("[data-checkout-hide]"));
+    els.forEach((el) => el.style.setProperty("display", "none", "important"));
+    return () => els.forEach((el) => el.style.removeProperty("display"));
   }, [active]);
 
   if (!active) return null;
@@ -64,7 +63,7 @@ export default function SelectionSummary({
       : "Selecione";
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-night/95 backdrop-blur"
+    <div className="fixed inset-x-0 bottom-0 z-50 border-t border-line bg-night"
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}>
       <div className="mx-auto max-w-[1360px] px-4 py-3 sm:px-6">
         {open && selectedNumbers.length > 0 && (

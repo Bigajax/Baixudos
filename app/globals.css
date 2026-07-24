@@ -227,12 +227,6 @@ textarea:focus-visible,
   margin-top: 0.35rem;
 }
 
-/* Durante o checkout (barra de resumo no rodapé), esconde a pill de
-   navegação e o FAB do WhatsApp pra não brigarem no mobile. */
-[data-checkout] [data-checkout-hide] {
-  display: none !important;
-}
-
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
