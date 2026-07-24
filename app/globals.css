@@ -10,6 +10,7 @@
   --color-line: #37373c;
   --font-display: var(--font-anton);
   --font-sans: var(--font-sora);
+  --font-mono: var(--font-plex-mono);
 }
 
 html {

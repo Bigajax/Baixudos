@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Anton, Sora } from "next/font/google";
+import { Anton, Sora, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -18,6 +18,14 @@ const anton = Anton({
 
 const sora = Sora({
   variable: "--font-sora",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+// Face de "instrumentação": numerais da grade, cronômetros e valores.
+const plexMono = IBM_Plex_Mono({
+  variable: "--font-plex-mono",
+  weight: ["400", "500", "600"],
   subsets: ["latin"],
   display: "swap",
 });
@@ -64,7 +72,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR" className={`${anton.variable} ${sora.variable} h-full antialiased`}>
+    <html lang="pt-BR" className={`${anton.variable} ${sora.variable} ${plexMono.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col bg-night text-white">
         <script
           type="application/ld+json"

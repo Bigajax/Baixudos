@@ -39,8 +39,15 @@ export const site = {
    */
   shopMode: "whatsapp" as "whatsapp" | "checkout",
 
-  /** Campanhas oficiais ficam desativadas até haver documentação completa. */
+  /** Campanhas oficiais (área informativa legada) ficam desativadas até haver documentação completa. */
   campaignsEnabled: false,
+
+  /**
+   * Campanhas de números da sorte (rifa) operadas no próprio site.
+   * Enquanto false, a rota /campanhas fica oculta/`notFound`.
+   * Requer Supabase configurado (.env.local) + campanha publicada no banco.
+   */
+  rafflesEnabled: true,
 
   /**
    * Barra de credibilidade da home. Não inventar números:
