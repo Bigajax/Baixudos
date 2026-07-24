@@ -4,6 +4,17 @@
  */
 import type { FaqItem } from "@/content/faq";
 
+/**
+ * Campanha em destaque no hero da HOME (estático — não bate no banco,
+ * para a home continuar sendo pré-renderizada). Editar aqui ao trocar
+ * a campanha ativa. Some quando `site.rafflesEnabled` for false.
+ */
+export const featuredRaffle = {
+  slug: "gol-vermelho",
+  prize: "Gol vermelho",
+  priceLabel: "R$ 25 o número",
+};
+
 export interface HowToStep {
   title: string;
   description: string;

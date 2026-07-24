@@ -3,9 +3,11 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { nextEvent } from "@/content/events";
+import { site } from "@/content/site";
+import { featuredRaffle } from "@/content/raffle";
 
 /** Barra de navegação fixa no rodapé — só em telas menores que lg. */
-const tabs = [
+const baseTabs = [
   {
     href: "/",
     label: "Início",
@@ -27,11 +29,35 @@ const tabs = [
       </svg>
     ),
   },
+  // Sorteio (rifa do Gol) — distinto do Ingresso: ícone de carro + destaque.
+  ...(site.rafflesEnabled
+    ? [
+        {
+          href: `/campanhas/${featuredRaffle.slug}`,
+          label: "Sorteio",
+          match: (p: string) => p.startsWith("/campanhas"),
+          highlight: true,
+          icon: (
+            <svg viewBox="0 0 24 24" fill="none" className="h-5 w-5" aria-hidden="true">
+              <path
+                d="M3 14v-1l1.8-4.2A2 2 0 0 1 6.6 7.6h6.8c.5 0 1 .2 1.4.6L18 11l2.3.9a1 1 0 0 1 .7 1V14M3 14h18M3 14v2h1.6M21 14v2h-1.6"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <circle cx="7.6" cy="16" r="1.7" stroke="currentColor" strokeWidth="1.6" />
+              <circle cx="16.4" cy="16" r="1.7" stroke="currentColor" strokeWidth="1.6" />
+            </svg>
+          ),
+        },
+      ]
+    : []),
   {
-    href: `/eventos/${nextEvent.slug}`,
+    href: nextEvent.ticketUrl ?? `/eventos/${nextEvent.slug}`,
     label: "Ingresso",
     match: () => false,
-    highlight: true,
+    highlight: !site.rafflesEnabled, // sem rifa, o ingresso segue em destaque
     icon: (
       <svg viewBox="0 0 24 24" fill="none" className="h-5 w-5" aria-hidden="true">
         <path
@@ -66,15 +92,15 @@ export default function MobileTabBar() {
       className="fixed inset-x-0 bottom-0 z-40 border-t border-line bg-night/95 backdrop-blur-md lg:hidden"
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
     >
-      <div className="grid grid-cols-4">
-        {tabs.map((tab) => {
+      <div className={site.rafflesEnabled ? "grid grid-cols-5" : "grid grid-cols-4"}>
+        {baseTabs.map((tab) => {
           const active = tab.match(pathname);
           return (
             <Link
               key={tab.label}
               href={tab.href}
               aria-current={active ? "page" : undefined}
-              className={`relative flex flex-col items-center gap-1 py-2.5 text-[10px] font-bold uppercase tracking-[0.1em] transition-colors ${
+              className={`relative flex flex-col items-center gap-1 py-2.5 text-[10px] font-bold uppercase tracking-[0.08em] transition-colors ${
                 tab.highlight
                   ? "text-signal"
                   : active

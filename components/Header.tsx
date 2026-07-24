@@ -6,6 +6,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { site } from "@/content/site";
 import { nextEvent } from "@/content/events";
+import { featuredRaffle } from "@/content/raffle";
 
 const nav = [
   { href: "/", label: "Início" },
@@ -75,7 +76,7 @@ export default function Header() {
           </span>
         </Link>
 
-        <nav className="hidden items-center gap-7 lg:flex" aria-label="Navegação principal">
+        <nav className="hidden items-center gap-6 lg:flex" aria-label="Navegação principal">
           {nav.map((item) => (
             <Link
               key={item.href}
@@ -99,6 +100,16 @@ export default function Header() {
           >
             <InstagramIcon className="h-5 w-5" />
           </a>
+
+          {site.rafflesEnabled && (
+            <Link
+              href={`/campanhas/${featuredRaffle.slug}`}
+              className="hidden items-center border border-signal px-4 py-2.5 text-[13px] font-bold uppercase tracking-[0.1em] text-signal transition-colors hover:bg-signal hover:text-white sm:inline-flex"
+              style={{ clipPath: "polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%)" }}
+            >
+              Sorteio do Gol
+            </Link>
+          )}
 
           <a
             href={ticketHref}
@@ -177,6 +188,15 @@ export default function Header() {
           }`}
           style={{ transitionDelay: open ? "440ms" : "0ms" }}
         >
+          {site.rafflesEnabled && (
+            <Link
+              href={`/campanhas/${featuredRaffle.slug}`}
+              className="block border border-signal py-3.5 text-center text-sm font-bold uppercase tracking-[0.12em] text-signal"
+              style={{ clipPath: "polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%)" }}
+            >
+              Sorteio do Gol
+            </Link>
+          )}
           <a
             href={ticketHref}
             {...(nextEvent.ticketUrl ? { target: "_blank", rel: "noopener noreferrer" } : {})}

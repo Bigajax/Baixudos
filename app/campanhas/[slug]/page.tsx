@@ -3,8 +3,6 @@ import { notFound } from "next/navigation";
 import { site } from "@/content/site";
 import { getRaffleCampaign, getCampaignGrid } from "@/lib/raffle/queries";
 import CampaignHero from "@/components/raffle/CampaignHero";
-import PrizeInfo from "@/components/raffle/PrizeInfo";
-import CampaignProgress from "@/components/raffle/CampaignProgress";
 import HowToParticipate from "@/components/raffle/HowToParticipate";
 import NumberGrid from "@/components/raffle/NumberGrid";
 import EventSection from "@/components/raffle/EventSection";
@@ -39,10 +37,8 @@ export default async function CampanhaPage(props: PageProps<"/campanhas/[slug]">
   return (
     <>
       <CampaignHero campaign={campaign} counts={grid.counts} />
-      <PrizeInfo campaign={campaign} />
-      <CampaignProgress campaign={campaign} counts={grid.counts} />
-      <HowToParticipate />
       <NumberGrid campaign={campaign} grid={grid} />
+      <HowToParticipate />
       <EventSection campaign={campaign} />
       <CampaignDocs campaign={campaign} />
       <CampaignFAQ />

@@ -1,6 +1,8 @@
 import Link from "next/link";
 import ScrollLights from "@/components/ScrollLights";
 import ReelWall from "@/components/home/ReelWall";
+import { site } from "@/content/site";
+import { featuredRaffle } from "@/content/raffle";
 
 export default function Hero() {
   return (
@@ -32,6 +34,28 @@ export default function Hero() {
               A Baixudos.PR reúne projetos, pessoas e marcas em uma das maiores experiências
               automotivas da região.
             </p>
+
+            {site.rafflesEnabled && (
+              <Link
+                href={`/campanhas/${featuredRaffle.slug}`}
+                className="group order-2 mt-6 flex w-fit items-center gap-3 self-start justify-self-start border border-line bg-panel/70 py-2 pl-2 pr-4 backdrop-blur-sm transition-colors hover:border-signal lg:order-none lg:mt-8"
+              >
+                <span className="bg-signal px-2 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-white">
+                  Sorte
+                </span>
+                <span className="text-[13px] text-smoke sm:text-sm">
+                  Concorra a um{" "}
+                  <span className="font-semibold text-white">{featuredRaffle.prize}</span>
+                  <span className="hidden sm:inline"> · {featuredRaffle.priceLabel}</span>
+                </span>
+                <span
+                  aria-hidden="true"
+                  className="text-signal transition-transform group-hover:translate-x-0.5"
+                >
+                  →
+                </span>
+              </Link>
+            )}
 
             <div className="order-3 mt-6 grid w-full gap-3 sm:mt-8 sm:flex sm:w-auto sm:items-center lg:order-none">
               <Link
