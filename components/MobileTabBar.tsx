@@ -65,7 +65,7 @@ export default function MobileTabBar() {
   return (
     <nav
       aria-label="Navegação rápida"
-      data-checkout-hide=""
+      data-mobile-pill=""
       className="fixed inset-x-0 bottom-0 z-40 flex justify-center px-4 lg:hidden"
       style={{ paddingBottom: "max(env(safe-area-inset-bottom), 0.75rem)" }}
     >

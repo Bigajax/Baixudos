@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { formatPrice } from "@/lib/format";
 import { padNumber } from "@/lib/raffle/types";
 
@@ -42,16 +42,24 @@ export default function SelectionSummary({
   onRemove,
 }: SummaryProps) {
   const [open, setOpen] = useState(false);
-  const active = selectedNumbers.length > 0 || planKind === "pack";
+  const barRef = useRef<HTMLDivElement>(null);
+  // A barra aparece assim que um modo está ativo (inclusive "1 avulso").
+  const active = planKind != null;
 
-  // Enquanto a barra de compra está no rodapé, esconde a pill de navegação
-  // e o FAB do WhatsApp (elementos com data-checkout-hide) para não brigarem.
+  // Enquanto a barra de compra ocupa o rodapé: sobe a pill de navegação para
+  // ficar ACIMA dela e esconde o FAB do WhatsApp (para não brigarem no mobile).
   useEffect(() => {
     if (!active) return;
-    const els = Array.from(document.querySelectorAll<HTMLElement>("[data-checkout-hide]"));
-    els.forEach((el) => el.style.setProperty("display", "none", "important"));
-    return () => els.forEach((el) => el.style.removeProperty("display"));
-  }, [active]);
+    const pill = document.querySelector<HTMLElement>("[data-mobile-pill]");
+    const fab = document.querySelector<HTMLElement>("[data-checkout-hide]");
+    const h = barRef.current?.offsetHeight ?? 88;
+    if (pill) pill.style.setProperty("bottom", `${h}px`, "important");
+    if (fab) fab.style.setProperty("display", "none", "important");
+    return () => {
+      if (pill) pill.style.removeProperty("bottom");
+      if (fab) fab.style.removeProperty("display");
+    };
+  }, [active, open, selectedNumbers.length]);
 
   if (!active) return null;
 
@@ -63,7 +71,7 @@ export default function SelectionSummary({
       : "Selecione";
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-50 border-t border-line bg-night"
+    <div ref={barRef} className="fixed inset-x-0 bottom-0 z-50 border-t border-line bg-night"
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}>
       <div className="mx-auto max-w-[1360px] px-4 py-3 sm:px-6">
         {open && selectedNumbers.length > 0 && (
