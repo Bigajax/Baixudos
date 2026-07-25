@@ -99,7 +99,6 @@ export default function ParticipationChooser({
                 quantity={pack.numberQuantity}
                 label={label}
                 price={formatPrice(pack.promotionalPriceCents)}
-                pricePerNumber={formatPrice(Math.floor(pack.promotionalPriceCents / pack.numberQuantity))}
                 badgeText="Melhor oferta"
                 onSelect={() => onChoosePack(pack)}
               />

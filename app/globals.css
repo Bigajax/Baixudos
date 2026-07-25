@@ -201,6 +201,12 @@ body {
   animation: ember-flicker 3.6s ease-in-out infinite;
 }
 
+/* Línguas de fogo do card em destaque — movimento lento e contínuo */
+@keyframes flame-lick {
+  0%, 100% { transform: translateX(-50%) translateY(8%) scaleY(0.9) scaleX(1.03); opacity: 0.6; }
+  50% { transform: translateX(-50%) translateY(-7%) scaleY(1.12) scaleX(0.93); opacity: 0.92; }
+}
+
 /* Foco visível */
 a:focus-visible,
 button:focus-visible,
