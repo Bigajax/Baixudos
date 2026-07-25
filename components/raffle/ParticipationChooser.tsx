@@ -39,22 +39,24 @@ function Card({
       type="button"
       aria-pressed={active}
       onClick={onSelect}
-      className={`relative flex min-w-[130px] flex-1 snap-start flex-col items-center border p-4 pt-5 text-center transition-colors ${
+      className={`relative flex flex-col items-center border px-1 py-2.5 text-center transition-colors sm:px-2 sm:py-4 sm:pt-5 ${
         active ? "border-signal bg-signal/[0.07]" : "border-line bg-panel hover:border-signal/60"
       }`}
     >
       {bestSeller && (
-        <span className="absolute -top-2 left-1/2 -translate-x-1/2 whitespace-nowrap bg-signal px-2 py-0.5 font-mono text-[9px] font-bold uppercase tracking-[0.12em] text-white">
-          ★ Mais vendido
+        <span className="absolute -top-2 left-1/2 -translate-x-1/2 whitespace-nowrap bg-signal px-1.5 py-0.5 font-mono text-[8px] font-bold uppercase tracking-[0.08em] text-white sm:px-2 sm:text-[9px] sm:tracking-[0.12em]">
+          ★<span className="hidden sm:inline"> Mais vendido</span>
         </span>
       )}
       {active && <Check />}
-      <span className="display text-4xl leading-none text-white">{big}</span>
-      <span className="mt-1.5 text-xs text-smoke">{label}</span>
-      <span className={`mt-3 font-mono text-lg font-semibold ${active ? "text-signal" : "text-white"}`}>{price}</span>
+      <span className="display text-2xl leading-none text-white sm:text-4xl">{big}</span>
+      <span className="mt-1 text-[9px] leading-tight text-smoke sm:mt-1.5 sm:text-xs">{label}</span>
+      <span className={`mt-2 font-mono text-[11px] font-semibold sm:mt-3 sm:text-lg ${active ? "text-signal" : "text-white"}`}>
+        {price}
+      </span>
       {discountPct != null && discountPct > 0 && (
         <span
-          className={`mt-1.5 px-2 py-0.5 font-mono text-[10px] font-bold ${
+          className={`mt-1 px-1 py-0.5 font-mono text-[8px] font-bold sm:mt-1.5 sm:px-2 sm:text-[10px] ${
             active ? "bg-signal text-white" : "bg-graphite text-smoke"
           }`}
         >
@@ -78,7 +80,7 @@ export default function ParticipationChooser({
     <div>
       <p className="text-sm font-semibold uppercase tracking-[0.14em] text-smoke">1. Escolha seu pack</p>
 
-      <div className="mt-4 flex snap-x gap-3 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <div className="mt-4 grid grid-cols-3 gap-2 sm:grid-cols-5 sm:gap-3">
         <Card
           active={mode === "free"}
           big="1"
