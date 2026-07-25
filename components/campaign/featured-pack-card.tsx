@@ -7,6 +7,8 @@ interface FeaturedPackCardProps {
   label: string;
   /** Preço promocional já formatado (ex.: "R$ 379,90"). */
   price: string;
+  /** Percentual de desconto (0 = sem badge). */
+  discountPct?: number;
   badgeText: string;
   onSelect: () => void;
 }
@@ -28,6 +30,7 @@ export default function FeaturedPackCard({
   quantity,
   label,
   price,
+  discountPct,
   badgeText,
   onSelect,
 }: FeaturedPackCardProps) {
@@ -64,6 +67,11 @@ export default function FeaturedPackCard({
       <span className={`mt-2 font-mono text-xs font-semibold sm:mt-3 sm:text-lg ${active ? "text-[#FFD21F]" : "text-white"}`}>
         {price}
       </span>
+      {discountPct != null && discountPct > 0 && (
+        <span className="mt-1 rounded-[2px] bg-[#FFB800] px-1.5 py-0.5 font-mono text-[8px] font-bold text-[#160a02] sm:mt-1.5 sm:text-[10px]">
+          −{discountPct}%
+        </span>
+      )}
     </button>
   );
 }

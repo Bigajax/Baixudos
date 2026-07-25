@@ -25,12 +25,13 @@ function Check() {
 }
 
 function Card({
-  active, big, label, price, bestSeller, onSelect,
+  active, big, label, price, discountPct, bestSeller, onSelect,
 }: {
   active: boolean;
   big: string;
   label: string;
   price: string;
+  discountPct?: number;
   bestSeller?: boolean;
   onSelect: () => void;
 }) {
@@ -54,6 +55,15 @@ function Card({
       <span className={`mt-2 font-mono text-xs font-semibold sm:mt-3 sm:text-lg ${active ? "text-signal" : "text-white"}`}>
         {price}
       </span>
+      {discountPct != null && discountPct > 0 && (
+        <span
+          className={`mt-1 rounded-[2px] px-1 py-0.5 font-mono text-[8px] font-bold sm:mt-1.5 sm:px-1.5 sm:text-[10px] ${
+            active ? "bg-signal text-white" : "bg-graphite text-smoke"
+          }`}
+        >
+          −{discountPct}%
+        </span>
+      )}
     </button>
   );
 }
@@ -91,6 +101,10 @@ export default function ParticipationChooser({
         {packs.map((pack) => {
           const isActive = mode === "pack" && packId === pack.id;
           const label = pack.numberQuantity === 1 ? "número" : "números";
+          const discountPct =
+            pack.originalPriceCents > 0
+              ? Math.round(((pack.originalPriceCents - pack.promotionalPriceCents) / pack.originalPriceCents) * 100)
+              : 0;
           if (pack.id === bestValuePackId) {
             return (
               <FeaturedPackCard
@@ -99,6 +113,7 @@ export default function ParticipationChooser({
                 quantity={pack.numberQuantity}
                 label={label}
                 price={formatPrice(pack.promotionalPriceCents)}
+                discountPct={discountPct}
                 badgeText="Melhor oferta"
                 onSelect={() => onChoosePack(pack)}
               />
@@ -111,6 +126,7 @@ export default function ParticipationChooser({
               big={String(pack.numberQuantity)}
               label={label}
               price={formatPrice(pack.promotionalPriceCents)}
+              discountPct={discountPct}
               bestSeller={pack.id === bestSellerId}
               onSelect={() => onChoosePack(pack)}
             />
