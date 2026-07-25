@@ -55,6 +55,13 @@ export default function CampaignHero({
           {campaign.title}
         </h1>
 
+        {campaign.drawAt && (
+          <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-3">
+            <p className="eyebrow">Faltam para a apuração</p>
+            <Countdown date={campaign.drawAt} />
+          </div>
+        )}
+
         <div className="mt-8 grid gap-6 lg:grid-cols-[1.15fr_0.85fr] lg:gap-8">
           {/* Foto grande do prêmio */}
           <div className="relative aspect-[4/3] overflow-hidden border border-line lg:aspect-auto">
@@ -171,13 +178,6 @@ export default function CampaignHero({
             </div>
           </div>
         </div>
-
-        {campaign.drawAt && (
-          <div className="mt-8">
-            <p className="eyebrow mb-3">Faltam para a apuração</p>
-            <Countdown date={campaign.drawAt} />
-          </div>
-        )}
       </div>
     </section>
   );
