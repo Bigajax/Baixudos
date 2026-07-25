@@ -46,12 +46,23 @@ export default function CampaignParticipation({
     setSelected(new Set());
   }, []);
 
-  const choosePack = useCallback((p: Pack) => {
-    setMode("pack");
-    setPack(p);
-    setMethod("grade");
-    setSelected(new Set());
-  }, []);
+  const choosePack = useCallback(
+    (p: Pack) => {
+      // Clicar no pack já selecionado desmarca (volta para o avulso).
+      if (mode === "pack" && pack?.id === p.id) {
+        setMode("free");
+        setPack(null);
+        setMethod("grade");
+        setSelected(new Set());
+        return;
+      }
+      setMode("pack");
+      setPack(p);
+      setMethod("grade");
+      setSelected(new Set());
+    },
+    [mode, pack],
+  );
 
   const fetchRandom = useCallback(
     async (count: number): Promise<number[]> => {
