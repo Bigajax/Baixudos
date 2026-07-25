@@ -2,6 +2,7 @@
 
 import { formatPrice } from "@/lib/format";
 import type { Pack } from "@/lib/checkout/types";
+import FeaturedPackCard from "@/components/campaign/featured-pack-card";
 
 interface ChooserProps {
   packs: Pack[];
@@ -38,7 +39,7 @@ function Card({
       type="button"
       aria-pressed={active}
       onClick={onSelect}
-      className={`relative flex flex-col items-center rounded-lg border px-1 py-3.5 text-center transition-colors sm:px-2 sm:py-5 ${
+      className={`relative flex flex-col items-center justify-center rounded-lg border px-1 py-3.5 text-center transition-colors sm:px-2 sm:py-5 ${
         active ? "border-signal bg-signal/[0.07]" : "border-line bg-panel hover:border-signal/60"
       }`}
     >
@@ -66,6 +67,15 @@ export default function ParticipationChooser({
   onChooseFree,
   onChoosePack,
 }: ChooserProps) {
+  // Pack com a melhor relação preço/quantidade (menor R$ por número).
+  // O selo "Melhor oferta" só vai para ele — mantém a afirmação verdadeira
+  // mesmo se os preços mudarem depois.
+  const bestValuePackId =
+    packs.reduce<{ id: string; ratio: number } | null>((best, p) => {
+      const ratio = p.promotionalPriceCents / p.numberQuantity;
+      return !best || ratio < best.ratio ? { id: p.id, ratio } : best;
+    }, null)?.id ?? null;
+
   return (
     <div>
       <p className="text-[15px] font-semibold text-white">Escolha quantos números deseja comprar.</p>
@@ -78,17 +88,35 @@ export default function ParticipationChooser({
           price={formatPrice(basePriceCents)}
           onSelect={onChooseFree}
         />
-        {packs.map((pack) => (
-          <Card
-            key={pack.id}
-            active={mode === "pack" && packId === pack.id}
-            big={String(pack.numberQuantity)}
-            label={pack.numberQuantity === 1 ? "número" : "números"}
-            price={formatPrice(pack.promotionalPriceCents)}
-            bestSeller={pack.id === bestSellerId}
-            onSelect={() => onChoosePack(pack)}
-          />
-        ))}
+        {packs.map((pack) => {
+          const isActive = mode === "pack" && packId === pack.id;
+          const label = pack.numberQuantity === 1 ? "número" : "números";
+          if (pack.id === bestValuePackId) {
+            return (
+              <FeaturedPackCard
+                key={pack.id}
+                active={isActive}
+                quantity={pack.numberQuantity}
+                label={label}
+                price={formatPrice(pack.promotionalPriceCents)}
+                pricePerNumber={formatPrice(Math.floor(pack.promotionalPriceCents / pack.numberQuantity))}
+                badgeText="Melhor oferta"
+                onSelect={() => onChoosePack(pack)}
+              />
+            );
+          }
+          return (
+            <Card
+              key={pack.id}
+              active={isActive}
+              big={String(pack.numberQuantity)}
+              label={label}
+              price={formatPrice(pack.promotionalPriceCents)}
+              bestSeller={pack.id === bestSellerId}
+              onSelect={() => onChoosePack(pack)}
+            />
+          );
+        })}
       </div>
 
       {mode === "pack" && packId && (

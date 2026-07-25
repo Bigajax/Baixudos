@@ -179,6 +179,28 @@ body {
   animation: race-light 3.4s infinite;
 }
 
+/* Selo "Melhor oferta" — brilho dourado pulsando sutil */
+@keyframes badge-glow {
+  0%, 100% {
+    box-shadow: 0 0 0 1px rgba(255, 184, 0, 0.35), 0 0 12px rgba(255, 184, 0, 0.22);
+  }
+  50% {
+    box-shadow: 0 0 0 1px rgba(255, 184, 0, 0.6), 0 0 22px rgba(255, 184, 0, 0.42);
+  }
+}
+.badge-glow {
+  animation: badge-glow 3.2s ease-in-out infinite;
+}
+
+/* Brilho dourado estático de apoio ao efeito de fogo (fallback e moldura) */
+@keyframes ember-flicker {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 0.8; }
+}
+.ember-flicker {
+  animation: ember-flicker 3.6s ease-in-out infinite;
+}
+
 /* Foco visível */
 a:focus-visible,
 button:focus-visible,
