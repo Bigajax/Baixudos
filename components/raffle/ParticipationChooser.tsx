@@ -24,13 +24,12 @@ function Check() {
 }
 
 function Card({
-  active, big, label, price, discountPct, bestSeller, onSelect,
+  active, big, label, price, bestSeller, onSelect,
 }: {
   active: boolean;
   big: string;
   label: string;
   price: string;
-  discountPct: number | null;
   bestSeller?: boolean;
   onSelect: () => void;
 }) {
@@ -39,30 +38,21 @@ function Card({
       type="button"
       aria-pressed={active}
       onClick={onSelect}
-      className={`relative flex flex-col items-center border px-1 py-2.5 text-center transition-colors sm:px-2 sm:py-4 sm:pt-5 ${
+      className={`relative flex flex-col items-center rounded-lg border px-1 py-3.5 text-center transition-colors sm:px-2 sm:py-5 ${
         active ? "border-signal bg-signal/[0.07]" : "border-line bg-panel hover:border-signal/60"
       }`}
     >
       {bestSeller && (
-        <span className="absolute -top-2 left-1/2 -translate-x-1/2 whitespace-nowrap bg-signal px-1.5 py-0.5 font-mono text-[8px] font-bold uppercase tracking-[0.08em] text-white sm:px-2 sm:text-[9px] sm:tracking-[0.12em]">
+        <span className="absolute -top-2 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-signal px-1.5 py-0.5 font-mono text-[8px] font-bold uppercase tracking-[0.08em] text-white sm:px-2 sm:text-[9px] sm:tracking-[0.12em]">
           ★<span className="hidden sm:inline"> Mais vendido</span>
         </span>
       )}
       {active && <Check />}
-      <span className="display text-2xl leading-none text-white sm:text-4xl">{big}</span>
-      <span className="mt-1 text-[9px] leading-tight text-smoke sm:mt-1.5 sm:text-xs">{label}</span>
-      <span className={`mt-2 font-mono text-[11px] font-semibold sm:mt-3 sm:text-lg ${active ? "text-signal" : "text-white"}`}>
+      <span className="display text-3xl leading-none text-white sm:text-4xl">{big}</span>
+      <span className="mt-1.5 text-[11px] leading-tight text-smoke sm:text-xs">{label}</span>
+      <span className={`mt-2 font-mono text-xs font-semibold sm:mt-3 sm:text-lg ${active ? "text-signal" : "text-white"}`}>
         {price}
       </span>
-      {discountPct != null && discountPct > 0 && (
-        <span
-          className={`mt-1 px-1 py-0.5 font-mono text-[8px] font-bold sm:mt-1.5 sm:px-2 sm:text-[10px] ${
-            active ? "bg-signal text-white" : "bg-graphite text-smoke"
-          }`}
-        >
-          −{discountPct}%
-        </span>
-      )}
     </button>
   );
 }
@@ -78,35 +68,27 @@ export default function ParticipationChooser({
 }: ChooserProps) {
   return (
     <div>
-      <p className="text-sm font-semibold uppercase tracking-[0.14em] text-smoke">1. Escolha seu pack</p>
+      <p className="text-[15px] font-semibold text-white">Escolha quantos números deseja comprar.</p>
 
-      <div className="mt-4 grid grid-cols-3 gap-2 sm:grid-cols-5 sm:gap-3">
+      <div className="mt-4 grid grid-cols-3 gap-2.5 sm:grid-cols-5 sm:gap-3">
         <Card
           active={mode === "free"}
           big="1"
-          label="número avulso"
+          label="número"
           price={formatPrice(basePriceCents)}
-          discountPct={null}
           onSelect={onChooseFree}
         />
-        {packs.map((pack) => {
-          const discountPct =
-            pack.originalPriceCents > 0
-              ? Math.round(((pack.originalPriceCents - pack.promotionalPriceCents) / pack.originalPriceCents) * 100)
-              : 0;
-          return (
-            <Card
-              key={pack.id}
-              active={mode === "pack" && packId === pack.id}
-              big={String(pack.numberQuantity)}
-              label={pack.title}
-              price={formatPrice(pack.promotionalPriceCents)}
-              discountPct={discountPct}
-              bestSeller={pack.id === bestSellerId}
-              onSelect={() => onChoosePack(pack)}
-            />
-          );
-        })}
+        {packs.map((pack) => (
+          <Card
+            key={pack.id}
+            active={mode === "pack" && packId === pack.id}
+            big={String(pack.numberQuantity)}
+            label={pack.numberQuantity === 1 ? "número" : "números"}
+            price={formatPrice(pack.promotionalPriceCents)}
+            bestSeller={pack.id === bestSellerId}
+            onSelect={() => onChoosePack(pack)}
+          />
+        ))}
       </div>
 
       {mode === "pack" && packId && (

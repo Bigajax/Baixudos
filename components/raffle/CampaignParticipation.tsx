@@ -177,7 +177,7 @@ export default function CampaignParticipation({
       {/* 2. Como escolher (avulso e packs) */}
       {(mode === "free" || isPack) && (
         <div className="mt-8">
-          <p className="text-sm font-semibold uppercase tracking-[0.14em] text-smoke">2. Como você quer escolher?</p>
+          <p className="text-[15px] font-semibold text-white">Como você quer escolher?</p>
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
             {([
               { key: "grade", title: "Escolher na grade", desc: "Veja os disponíveis e escolha os seus.", icon: "grid" },
@@ -214,8 +214,8 @@ export default function CampaignParticipation({
 
       {/* 3. Números */}
       <div className="mt-8">
-        <p className="mb-4 text-sm font-semibold uppercase tracking-[0.14em] text-smoke">
-          3. {method === "aleatorio" ? "Seus números da sorte" : "Escolha seus números"}
+        <p className="mb-4 text-[15px] font-semibold text-white">
+          {method === "aleatorio" ? "Seus números da sorte" : "Escolha seus números"}
         </p>
 
         {showGrid ? (
