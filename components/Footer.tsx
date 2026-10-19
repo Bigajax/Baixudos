@@ -104,18 +104,20 @@ export default function Footer() {
         </div>
 
         <div className="mt-12 flex flex-col gap-2 border-t border-line pt-6 text-xs text-smoke/60 sm:flex-row sm:items-center sm:justify-between">
-          <p>© {year} Baixudos.PR. Todos os direitos reservados.</p>
+          <div>
+            <p>© {year} Baixudos.PR. Todos os direitos reservados.</p>
+            <p className="mt-1">
+              <a
+                href="https://rafaelrazeira.com.br/"
+                target="_blank"
+                rel="noopener"
+                className="transition-colors hover:text-smoke"
+              >
+                site por Rafael Razeira Estúdio
+              </a>
+            </p>
+          </div>
           {site.cnpj ? <p>CNPJ {site.cnpj}</p> : null}
-          <p>
-            <a
-              href="https://rafaelrazeira.com.br/"
-              target="_blank"
-              rel="noopener"
-              className="transition-colors hover:text-smoke"
-            >
-              site por Rafael Razeira Estúdio
-            </a>
-          </p>
         </div>
       </div>
     </footer>
